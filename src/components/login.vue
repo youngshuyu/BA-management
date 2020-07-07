@@ -39,11 +39,7 @@
           </el-form-item>
 
           <el-form-item label="请输入密码" prop="pass">
-            <el-input
-              placeholder="请输入密码"
-              type="password"
-              autocomplete="new-password"
-            ></el-input>
+            <el-input placeholder="请输入密码" type="password" autocomplete="new-password"></el-input>
           </el-form-item>
 
           <el-form-item style="margin-top:15px">
@@ -65,23 +61,18 @@
 export default {
   name: "login",
   data() {
-    return {
-     
-    };
+    return {};
   },
   created() {},
-  mounted() {
-    
-  },
-  methods: {
-  }
+  mounted() {},
+  methods: {}
 };
 </script>
 
 <style lang="less" scoped>
 .loginPageWrapper {
   width: 100%;
-  height: 100%;
+  height: 100vh;
   background-color: #fff;
   background: url(.././assets/img/登录背景.png) no-repeat center center;
   background-size: 100% 100%;
