@@ -24,32 +24,44 @@
         <div :style="{fontSize:'60px',color:'#fff'}">
           <i class="el-icon-menu"></i>
         </div>
-        <div class="logoText">新人培训入司管理系统</div>
+        <div class="logoText">Case Analysis platform</div>
       </div>
       <div class="formContainer">
         <el-form
           label-position="top"
           status-icon
+          :model="ruleForm"
+          :rules="rules"
           ref="ruleForm"
           label-width="110px"
           class="formBox"
         >
-          <el-form-item label="请输入用户名" prop="name">
-            <el-input placeholder="请输入用户名" autocomplete="on"></el-input>
+          <!-- <el-input v-model="userName" placeholder="Please enter the user name" autocomplete="on"></el-input> -->
+          <el-form-item label="Please enter the user name" prop="name">
+            <el-input
+              v-model="ruleForm.name"
+              placeholder="Please enter the user name"
+              autocomplete="on"
+            ></el-input>
           </el-form-item>
 
           <el-form-item label="请输入密码" prop="pass">
-            <el-input placeholder="请输入密码" type="password" autocomplete="new-password"></el-input>
+            <el-input
+              v-model="ruleForm.pass"
+              placeholder="请输入密码"
+              type="password"
+              autocomplete="new-password"
+            ></el-input>
           </el-form-item>
 
           <el-form-item style="margin-top:15px">
             <el-col>
-              <el-button type="primary">登录</el-button>
+              <el-button type="primary" :loading="loading" @click="submitForm('ruleForm')">登录</el-button>
             </el-col>
           </el-form-item>
           <el-form-item>
             <el-col style="text-align:right">
-              <div class="reset">重置信息</div>
+              <div class="reset" @click="resetForm('ruleForm')">重置信息</div>
             </el-col>
           </el-form-item>
         </el-form>
@@ -61,11 +73,72 @@
 export default {
   name: "login",
   data() {
-    return {};
+    var checkName = (rule, value, callback) => {
+      console.log(value);
+      if (!value) {
+        return callback(new Error("用户名不能为空"));
+      } else {
+        callback();
+      }
+    };
+    var validatePass = (rule, value, callback) => {
+      if (value === "") {
+        callback(new Error("请输入密码"));
+      } else if (String(value).length < 6) {
+        callback(new Error("密码长度不小于6位！"));
+      } else {
+        callback();
+      }
+    };
+    return {
+      loading: false,
+      ruleForm: {
+        name: "",
+        pass: ""
+      },
+      rules: {
+        pass: [{ required: true, validator: validatePass, trigger: "blur" }],
+        name: [{ required: true, validator: checkName, trigger: "blur" }]
+      }
+    };
   },
   created() {},
   mounted() {},
-  methods: {}
+  methods: {
+    // 点击登录之后校验
+    submitForm(formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let formParams = {
+            userCode: this.ruleForm.name, // 用户名
+            passWord: this.ruleForm.pass, // 密码
+            channel: this.ruleForm.department // 渠道
+          };
+          this.doSubmitForm(formParams);
+        } else {
+          console.log("表单校验错误!!");
+          return false;
+        }
+      });
+    },
+    // 执行登录
+    async doSubmitForm (params) {
+      this.loading = true;
+      let res = await this.$axios({
+        url: '/auth/user/login',
+        method: 'post',
+        data: {
+          'password': this.ruleForm.pass,
+          'username': this.ruleForm.name
+        }
+      })
+      console.log(res);
+    },
+    // 表单重置
+    resetForm (formName) {
+      this.$refs[formName].resetFields();
+    }
+  }
 };
 </script>
 
