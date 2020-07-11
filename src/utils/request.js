@@ -3,13 +3,13 @@ import axios from 'axios'
 import { Message } from 'element-ui'// 引入提示对象
 // import JsonBig from 'json-bigint'// 引入第三方包
 
-axios.defaults.baseURL = 'http://192.168.124.11:7001'
+axios.defaults.baseURL = 'http://47.95.197.255:7001'
 
 axios.interceptors.request.use(function (config) {
 //   // 在发起请求请做一些业务处理
 //   // config是要发送请求的配置信息
-//   let token = window.localStorage.getItem('user-token')// 获取令牌
-//   config.headers['Authorization'] = `Bearer ${token}`// 统一注入token 到headers属性 因为所有接口要求的token格式是一样的
+  let token = window.localStorage.getItem('user-token')// 获取令牌
+  config.headers['authorization'] = '043ef4e7caee456ea02de11931408651'// 统一注入token 到headers属性 因为所有接口要求的token格式是一样的
   return config
 }, function (error) {
 // 对请求失败做处理

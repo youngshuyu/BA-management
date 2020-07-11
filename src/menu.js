@@ -2,17 +2,17 @@ export const menuData = [
   {
     path: '/caseManagement',
     name: 'caseManagement',
-    title: '案件管理',
+    title: 'caseManagement',
     children: [
       {
         path: '/caseManagement',
         name: 'caseMan',
-        title: '案件管理',
+        title: 'caseManagement',
         children: [
           {
             path: '/caseManagement/CaseList',
             name: 'CaseList',
-            title: '案件列表'
+            title: 'CaseList'
           }
         ]
       }
@@ -21,17 +21,17 @@ export const menuData = [
   {
     path: '/classifyManagement',
     name: 'classifyManagement',
-    title: '分类管理',
+    title: 'classifyManagement',
     children: [
       {
         path: '/classifyManagement',
         name: 'classifyMan',
-        title: '分类管理',
+        title: 'classifyManagement',
         children: [
           {
             path: '/classifyManagement/CaseClassification',
             name: 'CaseClassification',
-            title: '案件分类'
+            title: 'CaseClassification'
           }
         ]
       }
@@ -40,22 +40,22 @@ export const menuData = [
   {
     path: '/LogStatistics',
     name: 'LogStatistics',
-    title: '日志统计',
+    title: 'LogStatistics',
     children: [
       {
         path: '/LogStatistics',
         name: 'LogStat',
-        title: '日志统计',
+        title: 'LogStatistics',
         children: [
           {
             path: '/LogStatistics/pushLog',
             name: 'pushLog',
-            title: '推送日志'
+            title: 'pushLog'
           },
           {
             path: '/LogStatistics/userLog',
             name: 'userLog',
-            title: '用户日志'
+            title: 'userLog'
           }
         ]
       }
@@ -64,27 +64,27 @@ export const menuData = [
   {
     path: '/systemManage',
     name: 'systemManage',
-    title: '系统管理',
+    title: 'systemManage',
     children: [
       {
         path: '/systemManage',
         name: 'sysMan',
-        title: '系统管理',
+        title: 'systemManage',
         children: [
           {
             path: '/systemManage/userManage',
             name: 'userManage',
-            title: '用户管理'
+            title: 'userManage'
           },
           {
             path: '/systemManage/roleManage',
             name: 'roleManage',
-            title: '角色管理'
+            title: 'roleManage'
           },
           {
             path: '/systemManage/originManage',
             name: 'originManage',
-            title: '组织机构'
+            title: 'originManage'
           }
         ]
       }

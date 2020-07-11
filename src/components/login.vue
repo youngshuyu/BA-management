@@ -45,10 +45,10 @@
             ></el-input>
           </el-form-item>
 
-          <el-form-item label="请输入密码" prop="pass">
+          <el-form-item label="enter your PIN" prop="pass">
             <el-input
               v-model="ruleForm.pass"
-              placeholder="请输入密码"
+              placeholder="enter your PIN"
               type="password"
               autocomplete="new-password"
             ></el-input>
@@ -56,12 +56,12 @@
 
           <el-form-item style="margin-top:15px">
             <el-col>
-              <el-button type="primary" :loading="loading" @click="submitForm('ruleForm')">登录</el-button>
+              <el-button type="primary" :loading="loading" @click="submitForm('ruleForm')">Login</el-button>
             </el-col>
           </el-form-item>
           <el-form-item>
             <el-col style="text-align:right">
-              <div class="reset" @click="resetForm('ruleForm')">重置信息</div>
+              <div class="reset" @click="resetForm('ruleForm')">resetMessage</div>
             </el-col>
           </el-form-item>
         </el-form>
@@ -132,7 +132,21 @@ export default {
           'username': this.ruleForm.name
         }
       })
+      this.loading = false;
       console.log(res);
+      if (res.code == 0) {
+        // console.log(res);
+        // window.localStorage.setItem('user-token', res.data)
+        // let res = await this.$axios({
+        //   url: '/auth/user/menu/list'
+        // })
+        this.$router.push('/caseManagement/CaseList')
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
     },
     // 表单重置
     resetForm (formName) {

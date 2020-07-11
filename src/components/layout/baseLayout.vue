@@ -3,7 +3,7 @@
   <div class="baseLayoutWrapper">
     <div class="baseLayoutHeader">
       <div class="baseLayoutHeaderLeft">
-        <p>档案管理</p>
+        <p>Case Analysis platform</p>
       </div>
       <div class="baseLayoutHeaderTab">
         <div v-for="(item,i) in tabList" :key="i" @click="handleTab(item)">
@@ -16,7 +16,7 @@
         <div class="baseLayoutHeaderInfoTop">
           <div class="baseLayoutHeaderInfoTopItem">
             <!-- <el-tooltip  placement="bottom-start"> -->
-            <p class="adminPeople">登录人:XXX</p>
+            <p class="adminPeople">user:XXX</p>
           </div>
 
           <div class="baseLayoutHeaderInfoTopItem" @click="dialogFormVisible = true">
@@ -90,8 +90,8 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button @click="dialogFormVisible = false">取 消</el-button>
-          <el-button type="primary">确认修改</el-button>
+          <el-button @click="dialogFormVisible = false">cancel</el-button>
+          <el-button type="primary">confirm</el-button>
         </el-form-item>
       </el-form>
     </el-dialog>
