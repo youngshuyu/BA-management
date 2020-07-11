@@ -71,7 +71,7 @@
     </div>
 
     <el-dialog title="修改密码" :visible.sync="dialogFormVisible">
-      <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm">
+      <el-form :model="ruleForm" status-icon ref="ruleForm">
         <el-form-item label="新密码" prop="newPass" :label-width="formLabelWidth">
           <el-input
             type="password"
@@ -98,51 +98,51 @@
   </div>
 </template>
 <script>
-import { menuData } from "@/menu";
+import { menuData } from '@/menu'
 export default {
-  data() {
+  data () {
     return {
       ruleForm: {
-        newPass: "",
-        checkPass: " "
+        newPass: '',
+        checkPass: ' '
       },
       tabList: [], // tab列表
       defaultSubMenu: [], // 默认的二级菜单
-      currentTab: "",
-      currentMenu: "",
-      formLabelWidth: "120px",
+      currentTab: '',
+      currentMenu: '',
+      formLabelWidth: '120px',
       dialogFormVisible: false, // 修改密码弹窗
-      pathnameArr: this.$router.history.current.path.substr(1).split("/") // 当前路由 或使用：window.location.href.split('#/')[1].split('/')
-    };
+      pathnameArr: this.$router.history.current.path.substr(1).split('/') // 当前路由 或使用：window.location.href.split('#/')[1].split('/')
+    }
   },
   methods: {
-    handleTab(list) {
-      this.currentTab = list.name;
-      let subMenuList = list.children;
-      let subSubMenuList = subMenuList[0].children;
+    handleTab (list) {
+      this.currentTab = list.name
+      let subMenuList = list.children
+      let subSubMenuList = subMenuList[0].children
 
-      this.defaultSubMenu = subMenuList;
-      this.currentMenu = subSubMenuList[0].name;
+      this.defaultSubMenu = subMenuList
+      this.currentMenu = subSubMenuList[0].name
 
-      this.$router.push(subSubMenuList[0].path);
+      this.$router.push(subSubMenuList[0].path)
     },
-    handleMenu(item) {
-      this.currentMenu = item.name;
-      this.$router.push(item.path);
+    handleMenu (item) {
+      this.currentMenu = item.name
+      this.$router.push(item.path)
     },
-    handleOpen(key, keyPath) {
-      console.log(key, keyPath);
+    handleOpen (key, keyPath) {
+      console.log(key, keyPath)
     },
-    handleClose(key, keyPath) {
-      console.log(key, keyPath);
+    handleClose (key, keyPath) {
+      console.log(key, keyPath)
     },
     // 根据当前路由，设置二级路由
-    setTabList(isDev) {
-      console.log(isDev);
-      console.log(menuData);
+    setTabList (isDev) {
+      console.log(isDev)
+      console.log(menuData)
 
-      let tabLists = [];
-      tabLists = menuData || [];
+      let tabLists = []
+      tabLists = menuData || []
       //   let menuDataByApi = JSON.parse(
       //     this.$commonUtils.getSessionItem("menuData")
       //   ); // 从缓存中取 登录时获取的菜单数据
@@ -156,35 +156,35 @@ export default {
       // let url = window.location.href;
       // let pathnameArr = url.split('#/')[1].split('/');
 
-      let pathnameArr = this.pathnameArr;
+      let pathnameArr = this.pathnameArr
       // console.log("当前路由地址 :" , pathnameArr);
 
-      let defaultSubMenus = []; // 二级菜单
+      let defaultSubMenus = [] // 二级菜单
       tabLists.map((item, index) => {
         if (item.name == pathnameArr[0]) {
-          defaultSubMenus = item.children;
+          defaultSubMenus = item.children
         }
-      });
+      })
       // defaultSubMenus = tabLists[0].children;
-      this.tabList = tabLists;
-      this.defaultSubMenu = defaultSubMenus;
+      this.tabList = tabLists
+      this.defaultSubMenu = defaultSubMenus
       // this.$router.push(defaultSubMenus[0].path);  // 默认跳转到第一个tab的第一个菜单 对应的页面
       // console.log("tab列表：" , this.tabList);
       // console.log("默认的二级菜单列表：" , this.defaultSubMenu);
     },
     // 点亮当前tab样式
-    setActivelyItem() {
-      let pathnameArr = this.pathnameArr;
-      this.currentTab = pathnameArr[0];
-      this.currentMenu = pathnameArr[1];
+    setActivelyItem () {
+      let pathnameArr = this.pathnameArr
+      this.currentTab = pathnameArr[0]
+      this.currentMenu = pathnameArr[1]
     }
   },
 
-  mounted() {
-    this.setTabList("dev"); // 传参"dev" 即可使用开发菜单（全部菜单）
-    this.setActivelyItem();
+  mounted () {
+    this.setTabList('dev') // 传参"dev" 即可使用开发菜单（全部菜单）
+    this.setActivelyItem()
   }
-};
+}
 </script>
 
 <style scoped lang="less">
@@ -294,7 +294,7 @@ export default {
     overflow-y: scroll;
     .baseLayoutAside {
       min-width: 200px;
-      height: 100%;
+      height: calc(100vh - 50px);
       /*background-color: #fff;*/
       overflow-y: scroll;
       /*padding: 10px 0 0 10px;*/
