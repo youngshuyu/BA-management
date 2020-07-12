@@ -71,59 +71,59 @@
 </template>
 <script>
 export default {
-  name: "login",
-  data() {
+  name: 'login',
+  data () {
     var checkName = (rule, value, callback) => {
-      console.log(value);
+      console.log(value)
       if (!value) {
-        return callback(new Error("用户名不能为空"));
+        return callback(new Error('The user name cannot be empty.'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     var validatePass = (rule, value, callback) => {
-      if (value === "") {
-        callback(new Error("请输入密码"));
+      if (value === '') {
+        callback(new Error('Please input a password.'))
       } else if (String(value).length < 6) {
-        callback(new Error("密码长度不小于6位！"));
+        callback(new Error('Password length is not less than 6 digits!'))
       } else {
-        callback();
+        callback()
       }
-    };
+    }
     return {
       loading: false,
       ruleForm: {
-        name: "",
-        pass: ""
+        name: '',
+        pass: ''
       },
       rules: {
-        pass: [{ required: true, validator: validatePass, trigger: "blur" }],
-        name: [{ required: true, validator: checkName, trigger: "blur" }]
+        pass: [{ required: true, validator: validatePass, trigger: 'blur' }],
+        name: [{ required: true, validator: checkName, trigger: 'blur' }]
       }
-    };
+    }
   },
-  created() {},
-  mounted() {},
+  created () {},
+  mounted () {},
   methods: {
     // 点击登录之后校验
-    submitForm(formName) {
+    submitForm (formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
           let formParams = {
             userCode: this.ruleForm.name, // 用户名
             passWord: this.ruleForm.pass, // 密码
             channel: this.ruleForm.department // 渠道
-          };
-          this.doSubmitForm(formParams);
+          }
+          this.doSubmitForm(formParams)
         } else {
-          console.log("表单校验错误!!");
-          return false;
+          console.log('表单校验错误!!')
+          return false
         }
-      });
+      })
     },
     // 执行登录
     async doSubmitForm (params) {
-      this.loading = true;
+      this.loading = true
       let res = await this.$axios({
         url: '/auth/user/login',
         method: 'post',
@@ -132,8 +132,8 @@ export default {
           'username': this.ruleForm.name
         }
       })
-      this.loading = false;
-      console.log(res);
+      this.loading = false
+      console.log(res)
       if (res.code == 0) {
         // console.log(res);
         // window.localStorage.setItem('user-token', res.data)
@@ -150,10 +150,10 @@ export default {
     },
     // 表单重置
     resetForm (formName) {
-      this.$refs[formName].resetFields();
+      this.$refs[formName].resetFields()
     }
   }
-};
+}
 </script>
 
 <style lang="less" scoped>

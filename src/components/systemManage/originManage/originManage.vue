@@ -53,7 +53,7 @@ export default {
         resource: '',
         desc: ''
       },
-      formLabelWidth: 'auto'
+      formLabelWidth: '220px'
     }
   },
   methods: {

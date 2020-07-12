@@ -20,13 +20,13 @@
           </div>
 
           <div class="baseLayoutHeaderInfoTopItem" @click="dialogFormVisible = true">
-            <el-tooltip content="修改密码" placement="bottom-start">
+            <el-tooltip content="Information modification" placement="bottom-start">
               <img src="@/assets/img/set.png" alt />
             </el-tooltip>
           </div>
 
-          <div class="baseLayoutHeaderInfoTopItem">
-            <el-tooltip content="退出登陆" placement="bottom-start">
+          <div class="baseLayoutHeaderInfoTopItem" @click="logout">
+            <el-tooltip content="LogOut" placement="bottom-start">
               <img src="@/assets/img/quit.png" alt />
             </el-tooltip>
           </div>
@@ -69,31 +69,22 @@
         <router-view />
       </div>
     </div>
-
-    <el-dialog title="修改密码" :visible.sync="dialogFormVisible">
-      <el-form :model="ruleForm" status-icon :rules="rules" ref="ruleForm">
-        <el-form-item label="新密码" prop="newPass" :label-width="formLabelWidth">
-          <el-input
-            type="password"
-            v-model="ruleForm.newPass"
-            autocomplete="new-password"
-            show-password
-          ></el-input>
+    <el-dialog title="Information modification" :visible.sync="dialogFormVisible">
+      <el-form :model="form">
+        <el-form-item label="UserName" :label-width="formLabelWidth">
+          <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="确认新密码" prop="checkPass" :label-width="formLabelWidth">
-          <el-input
-            type="password"
-            v-model="ruleForm.checkPass"
-            autocomplete="new-password"
-            show-password
-          ></el-input>
+        <el-form-item label="UserAccount" :label-width="formLabelWidth">
+          <el-input v-model="form.account" autocomplete="off"></el-input>
         </el-form-item>
-
-        <el-form-item>
-          <el-button @click="dialogFormVisible = false">cancel</el-button>
-          <el-button type="primary">confirm</el-button>
+        <el-form-item label="Password" :label-width="formLabelWidth">
+          <el-input v-model="form.password" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="dialogFormVisible = false">Cancel</el-button>
+        <el-button type="primary" @click="onEditAccountInfo">Confirm</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -101,44 +92,33 @@
 import { menuData } from '@/menu'
 export default {
   data () {
-    var validatePass = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请输入密码'))
-      } else {
-        if (this.ruleForm.checkPass !== '') {
-          this.$refs.ruleForm.validateField('checkPass')
-        }
-        callback()
-      }
-    }
-    var validatePass2 = (rule, value, callback) => {
-      if (value === '') {
-        callback(new Error('请再次输入密码'))
-      } else if (value !== this.ruleForm.newPass) {
-        callback(new Error('两次输入密码不一致!'))
-      } else {
-        callback()
-      }
-    }
     return {
-      rules: {
-        newPass: [{ validator: validatePass, trigger: 'blur' }],
-        checkPass: [{ validator: validatePass2, trigger: 'blur' }]
-      },
-      ruleForm: {
-        newPass: '',
-        checkPass: ' '
-      },
       tabList: [], // tab列表
       defaultSubMenu: [], // 默认的二级菜单
       currentTab: '',
       currentMenu: '',
       formLabelWidth: '120px',
       dialogFormVisible: false, // 修改密码弹窗
-      pathnameArr: this.$router.history.current.path.substr(1).split('/') // 当前路由 或使用：window.location.href.split('#/')[1].split('/')
+      pathnameArr: this.$router.history.current.path.substr(1).split('/'), // 当前路由 或使用：window.location.href.split('#/')[1].split('/')
+      form: {
+        name: '',
+        account: '',
+        password: '',
+        region: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: ''
+      }
     }
   },
   methods: {
+    logout () {
+      this.$router.push('/login')
+      window.localStorage.removeItem('user-token')
+    },
     handleTab (list) {
       this.currentTab = list.name
       let subMenuList = list.children
@@ -200,6 +180,9 @@ export default {
       let pathnameArr = this.pathnameArr
       this.currentTab = pathnameArr[0]
       this.currentMenu = pathnameArr[1]
+    },
+    onEditAccountInfo () {
+      this.dialogFormVisible = false
     }
   },
 
@@ -301,7 +284,7 @@ export default {
         margin: 14px 0 0 20px;
         left: 20px;
         top: 14px;
-        width: 128px;
+        width: 180px;
         height: 22px;
         color: rgba(255, 255, 255, 1);
         font-size: 16px;
