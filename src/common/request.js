@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { urlUtils } from './UrlUtils'
 
 axios.interceptors.request.use(function (config) {
   return config

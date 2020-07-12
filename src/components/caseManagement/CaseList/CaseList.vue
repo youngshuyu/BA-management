@@ -158,7 +158,7 @@ export default {
           pageSize: 10
         }
       })
-      if (res.code === 0) {
+      if (res.code === "0") {
         this.list = res.data.list
         this.total = res.data.count
         console.log(res)
@@ -168,7 +168,7 @@ export default {
           type: 'warning'
         })
       }
-      console.log(res)
+      // console.log(res)
     }
   },
   created () {
