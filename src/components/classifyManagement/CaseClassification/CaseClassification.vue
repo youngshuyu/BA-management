@@ -28,25 +28,25 @@
 
 <script>
 export default {
-  name: "CaseClassification",
-  data() {
+  name: 'CaseClassification',
+  data () {
     return {
-      tableData: ""
-    };
+      tableData: ''
+    }
   },
   methods: {
-    async getList() {
+    async getList () {
       let res = await this.$axios({
-        url: "/business/category/case/list"
-      });
-      console.log('结果',res.data);
+        url: '/business/category/case/list'
+      })
+      console.log('结果', res.data)
       this.tableData = res.data
     }
   },
-  created() {
-    this.getList();
+  created () {
+    this.getList()
   }
-};
+}
 </script>
 
 <style lang="less" scoped>

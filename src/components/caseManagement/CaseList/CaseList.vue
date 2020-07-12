@@ -2,24 +2,25 @@
   <div class="caselist-wrapper">
     <el-card shadow="hover">
       <div class="search">
-        案件搜索：
-        <el-input  size="small" v-model="keyword" placeholder="请输入关键词" class="case-search"></el-input>时间选择：
+        Case Search:
+        <el-input  size="small" v-model="keyword" placeholder="Please enter keywords" class="case-search"></el-input>
+        Time Select:
         <el-date-picker
           size="small"
           v-model="time"
           type="datetimerange"
           :picker-options="pickerOptions"
-          range-separator="至"
-          start-placeholder="开始日期"
-          end-placeholder="结束日期"
+          range-separator="to"
+          start-placeholder="start date"
+          end-placeholder="end date"
           align="right"
           class="date-picker"
         ></el-date-picker>
-        <el-button size="small" type="primary" @click="onSearchCase">确定</el-button>
+        <el-button size="small" type="primary" @click="onSearchCase">confirm</el-button>
       </div>
       <div class="caseClass-export">
-        案件种类：
-        <el-select size="small" v-model="caseClass" placeholder="请选择" class="caseClass">
+        Types Of Cases：
+        <el-select size="small" v-model="caseClass" placeholder="Please choose" class="caseClass">
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -27,11 +28,12 @@
             :value="item.value"
           ></el-option>
         </el-select>
-        <el-button size="small" type="primary">下载导入模板</el-button>
+        <el-button size="small" type="primary">Download imported template</el-button>
         <el-upload
           class="upload-demo"
+          :action="action"
         >
-          <el-button size="small" type="primary">点击上传</el-button>
+          <el-button size="small" type="primary">Click upload</el-button>
         </el-upload>
       </div>
     </el-card>
@@ -40,9 +42,9 @@
         <div style="flex:1;">
           <div class="caselistTitle">{{item.title}}</div>
           <div class="caselistConentBottom">
-            <div class="caselistaAuthor">作者:{{item.author}}</div>
-            <div class="caselistTime">发布时间:{{item.publishTime}}</div>
-            <div class="caselistReadCount">阅读数:{{item.readCount}}</div>
+            <div class="caselistaAuthor">Author:{{item.author}}</div>
+            <div class="caselistTime">Rlease time:{{item.publishTime}}</div>
+            <div class="caselistReadCount">Pageview:{{item.readCount}}</div>
           </div>
         </div>
         <div class="buttonPush">
@@ -59,94 +61,95 @@
 
 <script>
 export default {
-  name: "caselist",
-  data() {
+  name: 'caselist',
+  data () {
     return {
       pickerOptions: {
         shortcuts: [
           {
-            text: "最近一周",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
+            text: 'Last week',
+            onClick (picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
             }
           },
           {
-            text: "最近一个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
+            text: 'Last month',
+            onClick (picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
             }
           },
           {
-            text: "最近三个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
+            text: 'The last three months',
+            onClick (picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
             }
           }
         ]
       },
-      list: "",
-      time: "",
-      keyword: "",
+      list: '',
+      time: '',
+      keyword: '',
       options: [
         {
-          value: "all",
-          label: "全部"
+          value: 'all',
+          label: 'all'
         },
         {
-          value: "policy",
-          label: "政策类"
+          value: 'policy',
+          label: 'Policy category'
         },
         {
-          value: "unscramble",
-          label: "解读类"
+          value: 'unscramble',
+          label: 'Unscramble category'
         }
       ],
-      caseClass: "",
+      caseClass: '',
       dialogFormVisible: false,
       form: {
-        name: "",
-        region: "",
-        date1: "",
-        date2: "",
+        name: '',
+        region: '',
+        date1: '',
+        date2: '',
         delivery: false,
         type: [],
-        resource: "",
-        desc: ""
+        resource: '',
+        desc: ''
       },
       total: 100,
-      formLabelWidth: "120px",
-      endTime: "",
-      startTime: "",
-      rule: "READ",
-      asc: "ASC"
-    };
+      formLabelWidth: '120px',
+      endTime: '',
+      startTime: '',
+      rule: 'READ',
+      asc: 'ASC',
+      action: ''
+    }
   },
   methods: {
-    onSearchCase() {
-      if (this.keyword === "") {
+    onSearchCase () {
+      if (this.keyword === '') {
         this.$message({
-          message: "关键字不能为空",
-          type: "warning"
-        });
+          message: 'Keyword cannot be empty.',
+          type: 'warning'
+        })
       } else {
       }
     },
-    async getList() {
+    async getList () {
       let res = await this.$axios({
-        url: "/business/category/case/list",
-        method: "post",
+        url: '/business/category/case/list',
+        method: 'post',
         data: {
           asc: this.asc, // ASC正序，DESC倒叙
-          categoryId: "", // 分类
+          categoryId: '', // 分类
           endTime: this.endTime, // 结束时间
           keyword: this.keyword,
           rule: this.rule, // 排序规则:READ 阅读量，TIME: 时间
@@ -154,24 +157,24 @@ export default {
           page: 1,
           pageSize: 10
         }
-      });
-      if (res.code == 0) {
-        this.list = res.data.list;
-        this.total = res.data.count;
-        console.log(res);
+      })
+      if (res.code === 0) {
+        this.list = res.data.list
+        this.total = res.data.count
+        console.log(res)
       } else {
         this.$message({
           message: res.msg,
-          type: "warning"
-        });
+          type: 'warning'
+        })
       }
-      console.log(res);
+      console.log(res)
     }
   },
-  created() {
-    this.getList();
+  created () {
+    this.getList()
   }
-};
+}
 </script>
 
 <style lang="less" scoped>

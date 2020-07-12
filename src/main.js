@@ -4,8 +4,9 @@ import router from './router'
 import store from './store'
 import axios from '../src/utils/request'// 引入自己封装过后的axios
 import ElementUI from 'element-ui'
+import locale from 'element-ui/lib/locale/lang/en'
 import 'element-ui/lib/theme-chalk/index.css'
-import VueParticles from 'vue-particles'; // 粒子背景
+import VueParticles from 'vue-particles' // 粒子背景
 Vue.use(VueParticles)
 
 // Vue.use(VueI18n)
@@ -19,7 +20,7 @@ Vue.use(VueParticles)
 // })
 Vue.prototype.$axios = axios
 Vue.config.productionTip = false
-Vue.use(ElementUI)
+Vue.use(ElementUI, { locale })
 new Vue({
   router,
   store,
