@@ -301,7 +301,7 @@ export default {
         margin: 14px 0 0 20px;
         left: 20px;
         top: 14px;
-        width: 128px;
+        width: 180px;
         height: 22px;
         color: rgba(255, 255, 255, 1);
         font-size: 16px;
