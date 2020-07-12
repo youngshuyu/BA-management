@@ -25,7 +25,7 @@
             </el-tooltip>
           </div>
 
-          <div class="baseLayoutHeaderInfoTopItem">
+          <div class="baseLayoutHeaderInfoTopItem" @click="logOut">
             <el-tooltip content="退出登陆" placement="bottom-start">
               <img src="@/assets/img/quit.png" alt />
             </el-tooltip>
@@ -139,6 +139,10 @@ export default {
     }
   },
   methods: {
+    logOut () {
+      this.$router.push('/login')
+      window.localStorage.removeItem('user-token')
+    },
     handleTab (list) {
       this.currentTab = list.name
       let subMenuList = list.children
