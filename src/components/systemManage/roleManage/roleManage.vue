@@ -34,7 +34,7 @@ export default {
   data () {
     return {
       tableData: '',
-      total: ''
+      total: 10
     }
   },
   methods: {

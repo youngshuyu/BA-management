@@ -16,7 +16,7 @@
           align="right"
           class="date-picker"
         ></el-date-picker>
-        <el-button size="small" type="primary" @click="onSearchCase">confirm</el-button>
+        <el-button size="small" type="primary" @click="onSearchCase">Confirm</el-button>
       </div>
       <div class="caseClass-export">
         Types Of Cases：
