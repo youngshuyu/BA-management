@@ -62,96 +62,96 @@
 
 <script>
 export default {
-  name: "CaseClassification",
-  data() {
+  name: 'CaseClassification',
+  data () {
     return {
       addDialogShow: false,
       JurisdictionDialogShow: false,
-      searchName: "", // 搜索用户姓名
+      searchName: '', // 搜索用户姓名
       userDialogShow: false,
       props: {
-        label: "name",
-        children: "zones"
+        label: 'name',
+        children: 'zones'
       },
       count: 1,
       userList: [
         {
-          date: "2016-05-02",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
+          date: '2016-05-02',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
         },
         {
-          date: "2016-05-04",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
+          date: '2016-05-04',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
         },
         {
-          date: "2016-05-01",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
+          date: '2016-05-01',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
         },
         {
-          date: "2016-05-03",
-          name: "王小虎",
-          address: "上海市普陀区金沙江路 1518 弄"
+          date: '2016-05-03',
+          name: '王小虎',
+          address: '上海市普陀区金沙江路 1518 弄'
         }
       ],
       tableData: [],
       total: 10
-    };
+    }
   },
   methods: {
-    async getList() {
+    async getList () {
       let res = await this.$axios({
-        url: "/business/category/case/list"
-      });
-      console.log("结果", res.data);
-      this.tableData = res.data;
+        url: '/business/category/case/list'
+      })
+      console.log('结果', res.data)
+      this.tableData = res.data
     },
-    handleCheckChange(data, checked, indeterminate) {
-      console.log(data, checked, indeterminate);
+    handleCheckChange (data, checked, indeterminate) {
+      console.log(data, checked, indeterminate)
     },
-    handleNodeClick(data) {
-      console.log(data);
+    handleNodeClick (data) {
+      console.log(data)
     },
-    loadNode(node, resolve) {
+    loadNode (node, resolve) {
       if (node.level === 0) {
-        return resolve([{ name: "region1" }, { name: "region2" }]);
+        return resolve([{ name: 'region1' }, { name: 'region2' }])
       }
-      if (node.level > 3) return resolve([]);
+      if (node.level > 3) return resolve([])
 
-      var hasChild;
-      if (node.data.name === "region1") {
-        hasChild = true;
-      } else if (node.data.name === "region2") {
-        hasChild = false;
+      var hasChild
+      if (node.data.name === 'region1') {
+        hasChild = true
+      } else if (node.data.name === 'region2') {
+        hasChild = false
       } else {
-        hasChild = Math.random() > 0.5;
+        hasChild = Math.random() > 0.5
       }
 
       setTimeout(() => {
-        var data;
+        var data
         if (hasChild) {
           data = [
             {
-              name: "zone" + this.count++
+              name: 'zone' + this.count++
             },
             {
-              name: "zone" + this.count++
+              name: 'zone' + this.count++
             }
-          ];
+          ]
         } else {
-          data = [];
+          data = []
         }
 
-        resolve(data);
-      }, 500);
+        resolve(data)
+      }, 500)
     }
   },
-  created() {
-    this.getList();
+  created () {
+    this.getList()
   }
-};
+}
 </script>
 
 <style lang="less" scoped>

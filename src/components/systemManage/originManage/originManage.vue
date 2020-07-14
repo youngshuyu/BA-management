@@ -2,14 +2,27 @@
   <div class="CaseClassification">
     <el-card class="box-card" shadow="hover">
       <div class="clearfix">
-        <el-button type="primary">Add organizational structure</el-button>
+        <el-button type="primary" @click="dialogFormVisible = true">Add organizational structure</el-button>
+        <el-dialog title="Add organizational structure" :visible.sync="dialogFormVisible" width="600">
+          <el-form :model="form">
+            <el-form-item label="Name of Organization Structure" :label-width="formLabelWidth">
+              <el-input v-model="form.name" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="Parent schema" :label-width="formLabelWidth">
+              <el-input v-model="form.parentSchema" autocomplete="off"></el-input>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="dialogFormVisible = false">Cancel</el-button>
+            <el-button type="primary" @click="onAddOrganizationalStructure">Add</el-button>
+          </div>
+        </el-dialog>
       </div>
     </el-card>
     <el-card shadow="hover" style="margin-top:10px;">
       <el-tree
+        :data="treeData"
         :props="props"
-        :load="loadNode"
-        lazy
         show-checkbox
         @check-change="handleCheckChange">
       </el-tree>
@@ -22,20 +35,34 @@ export default {
   name: 'CaseClassification',
   data () {
     return {
+      treeData: [],
       props: {
         label: 'name',
-        children: 'zones'
+        children: 'sons'
       },
-      count: 1
+      count: 1,
+      dialogFormVisible: false,
+      form: {
+        name: '',
+        parentSchema: '',
+        region: '',
+        date1: '',
+        date2: '',
+        delivery: false,
+        type: [],
+        resource: '',
+        desc: ''
+      },
+      formLabelWidth: '220px'
     }
   },
   methods: {
     async getList () {
       let res = await this.$axios({
-        url: '/business/category/case/list'
+        url: '/auth/system/organization/tree'
       })
       console.log('结果', res.data)
-      this.tableData = res.data
+      this.treeData = res.data
     },
     handleCheckChange (data, checked, indeterminate) {
       console.log(data, checked, indeterminate)
@@ -72,6 +99,9 @@ export default {
 
         resolve(data)
       }, 500)
+    },
+    onAddOrganizationalStructure () {
+      this.dialogFormVisible = false
     }
 
   },
