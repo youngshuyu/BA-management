@@ -123,10 +123,8 @@ export default {
       this.currentTab = list.name
       let subMenuList = list.children
       let subSubMenuList = subMenuList[0].children
-
       this.defaultSubMenu = subMenuList
       this.currentMenu = subSubMenuList[0].name
-
       this.$router.push(subSubMenuList[0].path)
     },
     handleMenu (item) {

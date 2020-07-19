@@ -19,10 +19,31 @@ export default new Router({
     {
       path: '/home',
       name: 'home',
-      component: () => import('@/components/home'),
+      component: () => import('@/components/layout/baseLayout'),
       meta: {
+        subMenu: true,
         title: 'home'
-      }
+      },
+      children: [
+        {
+          path: 'home',
+          name: 'homePage',
+          component: () => import('@/components/layout/emptyLayout'),
+          meta: {
+            title: 'homePage'
+          },
+          children: [
+            {
+              path: '/home/index',
+              name: ' index',
+              component: () => import('@/components/home/index'),
+              meta: {
+                title: 'index'
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       path: '/caseManagement',
