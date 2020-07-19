@@ -3,9 +3,14 @@
     <el-card shadow="hover">
       <div class="search">
         Case Search:
-        <el-input  size="small" v-model="keyword" placeholder="Please enter keywords" class="case-search"></el-input>
-        Time Select:
+        <el-input
+          size="small"
+          v-model="keyword"
+          placeholder="Please enter keywords"
+          class="case-search"
+        ></el-input>Time Select:
         <el-date-picker
+          value-format="yyyy-MM-dd HH:mm:ss"
           size="small"
           v-model="time"
           type="datetimerange"
@@ -28,19 +33,38 @@
             :value="item.value"
           ></el-option>
         </el-select>
-        <el-button size="small" type="primary">Download imported template</el-button>
-        <el-upload
-          class="upload-demo"
-          :action="action"
-        >
-          <el-button size="small" type="primary">Click upload</el-button>
-        </el-upload>
+        <el-button size="small" type="primary" @click="downloadTemplate">Download imported template</el-button>
+        <el-button size="small" type="primary" @click="openImportDialog">Click upload</el-button>
+        <el-dialog title="Import article" :visible.sync="importDialog" width="500px">
+          <div style="margin-bottom:10px;">Please check the type of article you want to upload.</div>
+          <el-checkbox-group v-model="checkList">
+            <el-checkbox :label="item.name" v-for="item in categoryList" :key="item.id"></el-checkbox>
+          </el-checkbox-group>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="importDialog = false">Cancel</el-button>
+            <el-upload
+              class="upload-demo"
+              ref="upload"
+              multiple
+              :action="importUrl"
+              :on-preview="handlePreview"
+              :on-remove="handleRemove"
+              :file-list="fileList"
+              :http-request="onImport"
+              :auto-upload="true"
+            >
+              <el-button slot="trigger" type="primary" style="margin-left:20px;">Choose File</el-button>
+              <!-- <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div> -->
+            </el-upload>
+            <!-- <el-button type="success" @click="onImport">Upload</el-button> -->
+          </div>
+        </el-dialog>
       </div>
     </el-card>
     <el-card shadow="hover" style="margin-top:10px;">
       <div class="caselistConent" v-for="(item,index) in list" :key="index">
         <div style="flex:1;">
-          <div class="caselistTitle">{{item.title}}</div>
+          <div class="caselistTitle" @click="enterCaseInfo(item)">{{item.title}}</div>
           <div class="caselistConentBottom">
             <div class="caselistaAuthor">Author:{{item.author}}</div>
             <div class="caselistTime">Rlease time:{{item.publishTime}}</div>
@@ -49,21 +73,57 @@
         </div>
         <div class="buttonPush">
           <el-button style="postion" type="primary" plain>push</el-button>
+          <el-button style="postion" type="primary" plain @click="editCaseType(item.id)">Edit</el-button>
         </div>
       </div>
+      <div class="noContent" v-show="list.length === 0">There are no matching results</div>
     </el-card>
+    <el-pagination
+      background
+      :current-page.sync="page"
+      layout="prev, pager, next"
+      @current-change="xxx()"
+      :total="total"
+    ></el-pagination>
+    <el-dialog :visible.sync="caseInfoDialog" width="80%">
+      <caseInfo :case="caseID"></caseInfo>
+    </el-dialog>
+    <el-dialog :visible.sync="caseTypeDialog" width="500px">
+      <div>
+        Types Of Cases：
+        <el-select size="small" v-model="editCase" multiple
+            collapse-tags
+            style="margin-left: 20px;" placeholder="Please choose" class="caseClass">
+          <el-option
+            v-for="item in options"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          ></el-option>
+        </el-select>
+        <div class="dialog-footer">
+          <el-button @click="caseTypeDialog = false">Cancel</el-button>
+          <el-button type="primary" @click="editCaseTypeSubmit">submit</el-button>
+        </div>
 
-    <div class>
-      <el-pagination background layout="prev, pager, next" :total="total"></el-pagination>
-    </div>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
+import caseInfo from './caseInfo'
 export default {
   name: 'caselist',
+  components: {
+    caseInfo
+  },
   data () {
     return {
+      editCase: [],
+      caseTypeDialog: false,
+      caseID: '',
+      caseInfoDialog: false,
       pickerOptions: {
         shortcuts: [
           {
@@ -98,21 +158,9 @@ export default {
       list: '',
       time: '',
       keyword: '',
-      options: [
-        {
-          value: 'all',
-          label: 'all'
-        },
-        {
-          value: 'policy',
-          label: 'Policy category'
-        },
-        {
-          value: 'unscramble',
-          label: 'Unscramble category'
-        }
-      ],
+      options: [],
       caseClass: '',
+      page: 1, // 当前页码
       dialogFormVisible: false,
       form: {
         name: '',
@@ -130,18 +178,62 @@ export default {
       startTime: '',
       rule: 'READ',
       asc: 'ASC',
-      action: ''
+      action: '',
+      importDialog: false,
+      categoryList: [],
+      checkList: [],
+      importUrl: 'http://47.95.197.255:7001/business/category/case/import/',
+      fileList: [],
+      files: '',
+      id: ''
     }
   },
   methods: {
-    onSearchCase () {
-      if (this.keyword === '') {
+    editCaseType (id) {
+      this.caseTypeDialog = true
+      this.id = id
+    },
+    async editCaseTypeSubmit () {
+      let choseArr = []
+      for (let i = 0; i < this.categoryList.length; i++) {
+        for (let j = 0; j < this.editCase.length; j++) {
+          if (this.editCase[j] == this.categoryList[i].name) {
+            choseArr.push(this.categoryList[i].id)
+          }
+        }
+      }
+      // console.log(choseArr)
+      let res = await this.$axios({
+        url: '/business/category/case/change',
+        method: 'put',
+        data: {
+          id: this.id,
+          categoryIds: choseArr
+        }
+      })
+      if (res.code == '0') {
         this.$message({
-          message: 'Keyword cannot be empty.',
+          message: 'operate successfully',
+          type: 'success'
+        })
+        this.caseTypeDialog = false
+        this.editCase = []
+      } else {
+        this.$message({
+          message: res.msg,
           type: 'warning'
         })
-      } else {
       }
+    },
+    enterCaseInfo (item) {
+      this.caseInfoDialog = true
+      this.caseID = item.id
+    },
+    xxx () {
+      this.getList()
+    },
+    onSearchCase () {
+      this.getList()
     },
     async getList () {
       let res = await this.$axios({
@@ -149,16 +241,16 @@ export default {
         method: 'post',
         data: {
           asc: this.asc, // ASC正序，DESC倒叙
-          categoryId: '', // 分类
-          endTime: this.endTime, // 结束时间
+          categoryId: this.caseClass, // 分类
+          endTime: this.time[1], // 结束时间
           keyword: this.keyword,
           rule: this.rule, // 排序规则:READ 阅读量，TIME: 时间
-          startTime: this.startTime, // 开始时间
-          page: 1,
+          startTime: this.time[0], // 开始时间
+          page: this.page,
           pageSize: 10
         }
       })
-      if (res.code === "0") {
+      if (res.code === '0') {
         this.list = res.data.list
         this.total = res.data.count
         console.log(res)
@@ -168,11 +260,119 @@ export default {
           type: 'warning'
         })
       }
-      // console.log(res)
+    },
+    async getCaseCategory () {
+      try {
+        const { data } = await this.$axios({
+          url: '/business/category/case/list'
+        })
+        console.log(data)
+
+        this.categoryList = data
+        let caseOptions = []
+        data.forEach(item => {
+          let obj = {}
+          obj.value = item.name
+          obj.label = item.name
+          caseOptions.push(obj)
+        })
+        this.options = caseOptions
+      } catch (error) {
+        console.log('[getCaseCategory fail]' + error)
+      }
+    },
+    downloadTemplate () {
+      // 获取XMLHttpRequest
+      let xmlResquest = new XMLHttpRequest()
+      //  发起请求
+      xmlResquest.open(
+        'GET',
+        'http://47.95.197.255:7001/business/category/case/model',
+        true
+      )
+      // 设置请求头类型
+      xmlResquest.setRequestHeader('Content-type', 'application/json')
+      //  设置请求token
+      xmlResquest.setRequestHeader(
+        'Authorization',
+        '043ef4e7caee456ea02de11931408651'
+      )
+      xmlResquest.responseType = 'blob'
+      //  返回
+      xmlResquest.onload = function (oEvent) {
+        let content = xmlResquest.response
+        // 组装a标签
+        let elink = document.createElement('a')
+        // 设置下载文件名
+        elink.download = 'importExcel.xlsx'
+        elink.style.display = 'none'
+        let blob = new Blob([content])
+        elink.href = URL.createObjectURL(blob)
+        document.body.appendChild(elink)
+        elink.click()
+        document.body.removeChild(elink)
+      }
+      xmlResquest.send()
+    },
+    openImportDialog () {
+      this.importDialog = true
+      // this.getCaseCategory()
+    },
+    async onImport (param) {
+      if (this.checkList.length === 0) {
+        this.$message({
+          message: 'Please select the article category!',
+          type: 'warning'
+        })
+        return
+      }
+      let categoryId = []
+      this.checkList.forEach(item => {
+        this.categoryList.forEach(i => {
+          if (i.name === item) {
+            categoryId.push(i.id)
+          }
+        })
+      })
+      let url = '/business/category/case/import/' + categoryId.join('-')
+      // console.log(url)
+      this.importUrl = this.importUrl + categoryId.join('-')
+      var fileObj = param.file
+      // FormData 对象
+      var file = new FormData()
+      // 文件对象
+      file.append('file', fileObj)
+      console.log(categoryId)
+      let res = await this.$axios({
+        url: url,
+        method: 'POST',
+        data: file
+      })
+      console.log(res)
+      if (res.code === '0') {
+        this.$message({
+          message: 'Operation is successful',
+          type: 'success'
+        })
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+      // this.importDialog = false
+      // this.$refs.upload.submit()
+    },
+    handleRemove (file, fileList) {
+      console.log(file, fileList)
+    },
+    handlePreview (file) {
+      console.log(file)
     }
   },
   created () {
     this.getList()
+    this.getCaseCategory()
   }
 }
 </script>
@@ -200,7 +400,7 @@ export default {
   }
   .caselistConent {
     .buttonPush {
-      width: 100px;
+      width: 160px;
       display: flex;
       justify-content: flex-end;
     }
@@ -211,6 +411,7 @@ export default {
     align-items: center;
     padding-bottom: 5px;
     .caselistTitle {
+      cursor: pointer;
       font-size: 24px;
       padding: 5px;
     }
@@ -235,6 +436,13 @@ export default {
         margin-right: 10px;
       }
     }
+  }
+  .noContent {
+    text-align: center;
+  }
+  .dialog-footer {
+    display: flex;
+    justify-content: flex-end;
   }
 }
 </style>

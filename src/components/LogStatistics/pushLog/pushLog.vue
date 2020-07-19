@@ -59,7 +59,7 @@
             ></el-option>
           </el-select>
         </div>
-        <el-button size="small" type="primary">search</el-button>
+        <el-button size="small" type="primary" style="margin-left:20px;">search</el-button>
       </div>
     </el-card>
   </div>
@@ -76,7 +76,7 @@ export default {
       pickerOptions: {
         shortcuts: [
           {
-            text: '最近一周',
+            text: 'Last week',
             onClick (picker) {
               const end = new Date()
               const start = new Date()
@@ -85,7 +85,7 @@ export default {
             }
           },
           {
-            text: '最近一个月',
+            text: 'Last month',
             onClick (picker) {
               const end = new Date()
               const start = new Date()
@@ -94,7 +94,7 @@ export default {
             }
           },
           {
-            text: '最近三个月',
+            text: 'The last three months',
             onClick (picker) {
               const end = new Date()
               const start = new Date()

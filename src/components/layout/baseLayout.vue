@@ -193,7 +193,7 @@ export default {
 }
 </script>
 
-<style scoped lang="less">
+<style lang="less">
 .baseLayoutWrapper {
   margin: 0;
   padding: 0;
@@ -369,5 +369,10 @@ export default {
       padding: 10px;
     }
   }
+}
+.el-pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
 }
 </style>
