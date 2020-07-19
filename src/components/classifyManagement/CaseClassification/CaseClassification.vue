@@ -41,118 +41,118 @@
 
 <script>
 export default {
-  name: "CaseClassification",
-  data() {
+  name: 'CaseClassification',
+  data () {
     return {
       tableData: [],
       dialogFormVisible: false,
       dialogFormVisible2: false,
-      addCaseName: "", // 添加的类名
-      editCaseName: "", // 修改的类名
-      editCaseID: "",
-      formLabelWidth: "120px"
-    };
+      addCaseName: '', // 添加的类名
+      editCaseName: '', // 修改的类名
+      editCaseID: '',
+      formLabelWidth: '120px'
+    }
   },
   methods: {
-    async getList() {
+    async getList () {
       let res = await this.$axios({
-        url: "/business/category/case/list"
-      });
+        url: '/business/category/case/list'
+      })
       // console.log('结果', res.data)
-      this.tableData = res.data;
+      this.tableData = res.data
     },
     // 添加分类
-    async onSaveCategory() {
-      if (this.addCaseName == "") {
+    async onSaveCategory () {
+      if (this.addCaseName == '') {
         this.$message({
-          message: "The class name cannot be empty",
-          type: "warning"
-        });
+          message: 'The class name cannot be empty',
+          type: 'warning'
+        })
       } else {
-        this.dialogFormVisible = false;
+        this.dialogFormVisible = false
         let res = await this.$axios({
-          url: "/business/category/case",
-          method: "post",
+          url: '/business/category/case',
+          method: 'post',
           data: {
             name: this.addCaseName
           }
-        });
+        })
         if (res.code == 0) {
-          this.dialogFormVisible = false;
+          this.dialogFormVisible = false
           this.$message({
-            message: "operate successfully",
-            type: "success"
-          });
-          this.getList();
+            message: 'operate successfully',
+            type: 'success'
+          })
+          this.getList()
         } else {
           this.$message({
-            message: "operation failure",
-            type: "warning"
-          });
+            message: 'operation failure',
+            type: 'warning'
+          })
         }
       }
     },
     // 删除分类
-    async deleteClass(row) {
+    async deleteClass (row) {
       let res = await this.$axios({
         url: `/business/category/case/${row.id}`,
-        method: "delete"
-      });
+        method: 'delete'
+      })
       if (res.code == 0) {
         this.$message({
-          message: "operate successfully",
-          type: "success"
-        });
-        this.getList();
+          message: 'operate successfully',
+          type: 'success'
+        })
+        this.getList()
       } else {
         this.$message({
-          message: "operation failure",
-          type: "warning"
-        });
+          message: 'operation failure',
+          type: 'warning'
+        })
       }
     },
     // 编辑分类
-    editClass(row) {
-      this.editCaseName = row.name;
-      this.editCaseID = row.id;
-      this.dialogFormVisible2 = true;
+    editClass (row) {
+      this.editCaseName = row.name
+      this.editCaseID = row.id
+      this.dialogFormVisible2 = true
     },
     // 保存编辑分类
-    async saveEditClass() {
-      if (this.editCaseName == "") {
+    async saveEditClass () {
+      if (this.editCaseName == '') {
         this.$message({
-          message: "The class name cannot be empty",
-          type: "warning"
-        });
+          message: 'The class name cannot be empty',
+          type: 'warning'
+        })
       } else {
         let res = await this.$axios({
-          url: "/business/category/case",
-          method: "put",
+          url: '/business/category/case',
+          method: 'put',
           data: {
             id: this.editCaseID,
             name: this.editCaseName
           }
-        });
+        })
         if (res.code == 0) {
-          this.dialogFormVisible2 = false;
+          this.dialogFormVisible2 = false
           this.$message({
-            message: "operate successfully",
-            type: "success"
-          });
-          this.getList();
+            message: 'operate successfully',
+            type: 'success'
+          })
+          this.getList()
         } else {
           this.$message({
-            message: "operation failure",
-            type: "warning"
-          });
+            message: 'operation failure',
+            type: 'warning'
+          })
         }
       }
     }
   },
-  created() {
-    this.getList();
+  created () {
+    this.getList()
   }
-};
+}
 </script>
 
 <style lang="less" scoped>

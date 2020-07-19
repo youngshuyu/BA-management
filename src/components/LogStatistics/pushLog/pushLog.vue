@@ -67,68 +67,68 @@
 
 <script>
 export default {
-  name: "pushLog",
-  data() {
+  name: 'pushLog',
+  data () {
     return {
-      headline: "", // 标题
-      pushPeople: "", // 推送人
-      choseTime: "", // 选择的时间
+      headline: '', // 标题
+      pushPeople: '', // 推送人
+      choseTime: '', // 选择的时间
       pickerOptions: {
         shortcuts: [
           {
-            text: "最近一周",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7);
-              picker.$emit("pick", [start, end]);
+            text: '最近一周',
+            onClick (picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 7)
+              picker.$emit('pick', [start, end])
             }
           },
           {
-            text: "最近一个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30);
-              picker.$emit("pick", [start, end]);
+            text: '最近一个月',
+            onClick (picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 30)
+              picker.$emit('pick', [start, end])
             }
           },
           {
-            text: "最近三个月",
-            onClick(picker) {
-              const end = new Date();
-              const start = new Date();
-              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90);
-              picker.$emit("pick", [start, end]);
+            text: '最近三个月',
+            onClick (picker) {
+              const end = new Date()
+              const start = new Date()
+              start.setTime(start.getTime() - 3600 * 1000 * 24 * 90)
+              picker.$emit('pick', [start, end])
             }
           }
         ]
       },
       options: [
         {
-          value: "选项1",
-          label: "article "
+          value: '选项1',
+          label: 'article '
         },
         {
-          value: "选项2",
-          label: "file"
+          value: '选项2',
+          label: 'file'
         }
       ],
-      value: "",
-      status: "",
+      value: '',
+      status: '',
       statusOptions: [
         {
-          value: "选项1",
-          label: "success"
+          value: '选项1',
+          label: 'success'
         },
         {
-          value: "选项2",
-          label: "fail"
+          value: '选项2',
+          label: 'fail'
         }
       ]
-    };
+    }
   }
-};
+}
 </script>
 
 <style lang="less" scoped>
