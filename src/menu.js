@@ -1,7 +1,21 @@
 export const menuData = [{
   path: '/home',
   name: 'home',
-  title: 'home'
+  title: 'home',
+  children: [
+    {
+      path: '/home',
+      name: 'home',
+      title: 'home',
+      children: [
+        {
+          path: '/home/index',
+          name: 'CaseList',
+          title: 'CaseList'
+        }
+      ]
+    }
+  ]
 },
 {
   path: '/caseManagement',
