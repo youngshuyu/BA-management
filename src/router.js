@@ -15,6 +15,13 @@ export default new Router({
       meta: {
         title: 'login'
       }
+    }, {
+      path: '/home',
+      name: 'home',
+      component: () => import('@/components/home'),
+      meta: {
+        title: 'home'
+      }
     },
     {
       path: '/caseManagement',

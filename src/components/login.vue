@@ -133,14 +133,23 @@ export default {
         }
       })
       this.loading = false
-      console.log(res)
-      if (res.code == 0) {
-        // console.log(res);
-        // window.localStorage.setItem('user-token', res.data)
-        // let res = await this.$axios({
-        //   url: '/auth/user/menu/list'
-        // })
-        this.$router.push('/caseManagement/CaseList')
+      // console.log(res)
+      if (res.code === '0') {
+        // console.log(res)
+        window.localStorage.setItem('user-token', res.data)
+        let result = await this.$axios({
+          url: '/auth/user/menu/list'
+        })
+        // console.log(result)
+        if (result.code == 0) {
+          window.localStorage.setItem('menuData', res.data)
+          this.$router.push('/caseManagement/CaseList')
+        } else {
+          this.$message({
+            message: res.msg,
+            type: 'warning'
+          })
+        }
       } else {
         this.$message({
           message: res.msg,
