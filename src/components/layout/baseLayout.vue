@@ -16,7 +16,7 @@
         <div class="baseLayoutHeaderInfoTop">
           <div class="baseLayoutHeaderInfoTopItem">
             <!-- <el-tooltip  placement="bottom-start"> -->
-            <p class="adminPeople">user:XXX</p>
+            <p class="adminPeople">user: {{userName}}</p>
           </div>
 
           <div class="baseLayoutHeaderInfoTopItem" @click="dialogFormVisible = true">
@@ -92,6 +92,7 @@ import { menuData } from '@/menu'
 export default {
   data () {
     return {
+      userName: window.localStorage.getItem('userName'),
       tabList: [], // tab列表
       defaultSubMenu: [], // 默认的二级菜单
       currentTab: '',
