@@ -41,7 +41,7 @@
             <el-checkbox :label="item.name" v-for="item in categoryList" :key="item.id"></el-checkbox>
           </el-checkbox-group>
           <div slot="footer" class="dialog-footer">
-            <el-button @click="importDialog = false">Cancel</el-button>
+            <el-button @click="importDialog = false" style="height:40px">Cancel</el-button>
             <el-upload
               class="upload-demo"
               ref="upload"
@@ -72,7 +72,7 @@
           </div>
         </div>
         <div class="buttonPush">
-          <el-button style="postion" type="primary" plain>push</el-button>
+          <el-button style="postion" type="primary" plain @click="pushCase(item.id)">push</el-button>
           <el-button style="postion" type="primary" plain @click="editCaseType(item.id)">Edit</el-button>
         </div>
       </div>
@@ -82,7 +82,7 @@
       background
       :current-page.sync="page"
       layout="prev, pager, next"
-      @current-change="xxx()"
+      @current-change="pagin()"
       :total="total"
     ></el-pagination>
     <el-dialog :visible.sync="caseInfoDialog" width="80%">
@@ -91,9 +91,15 @@
     <el-dialog :visible.sync="caseTypeDialog" width="500px">
       <div>
         Types Of Cases：
-        <el-select size="small" v-model="editCase" multiple
-            collapse-tags
-            style="margin-left: 20px;" placeholder="Please choose" class="caseClass">
+        <el-select
+          size="small"
+          v-model="editCase"
+          multiple
+          collapse-tags
+          style="margin-left: 20px;"
+          placeholder="Please choose"
+          class="caseClass"
+        >
           <el-option
             v-for="item in options"
             :key="item.value"
@@ -101,11 +107,26 @@
             :value="item.value"
           ></el-option>
         </el-select>
-        <div class="dialog-footer">
+        <div class="dialog-footer" style="margin-top:10px;">
           <el-button @click="caseTypeDialog = false">Cancel</el-button>
           <el-button type="primary" @click="editCaseTypeSubmit">submit</el-button>
         </div>
-
+      </div>
+    </el-dialog>
+    <el-dialog :visible.sync="pushDialog" width="500px">
+      <el-select v-model="pushName" :filter-method="searchPushPeople" filterable placeholder="请输入姓名">
+        <el-option
+          v-for="item in pushOptions"
+          :key="item.id"
+          :label="item.realName + '/' + item.route"
+          :value="item.realName + '/' + item.id"
+        >
+          <p style="margin:0;">{{ item.realName }}/{{ item.route }}</p>
+        </el-option>
+      </el-select>
+      <div class="dialog-footer" style="margin-top:10px;">
+        <el-button @click="closePushDialog">Cancel</el-button>
+        <el-button type="primary" @click="pushSubmit">submit</el-button>
       </div>
     </el-dialog>
   </div>
@@ -120,6 +141,9 @@ export default {
   },
   data () {
     return {
+      pushName: '',
+      pushOptions: [],
+      pushDialog: false,
       editCase: [],
       caseTypeDialog: false,
       caseID: '',
@@ -159,7 +183,7 @@ export default {
       time: '',
       keyword: '',
       options: [],
-      caseClass: '',
+      caseClass: [],
       page: 1, // 当前页码
       dialogFormVisible: false,
       form: {
@@ -185,14 +209,65 @@ export default {
       importUrl: 'http://47.95.197.255:7001/business/category/case/import/',
       fileList: [],
       files: '',
-      id: ''
+      id: '',
+      pushId: 1
     }
   },
   methods: {
+    closePushDialog () {
+      this.pushDialog = false
+      this.pushName = ''
+    },
+    async pushSubmit () {
+      let realName = this.pushName.split('/')[0]
+      let userId = Number(this.pushName.split('/')[1])
+      let res = await this.$axios({
+        url: '/business/category/case/push',
+        method: 'post',
+        data: {
+          caseId: this.pushId,
+          realName: realName,
+          userId: userId
+        }
+      })
+      if (res.code == '0') {
+        this.pushDialog = false
+        this.pushName = ''
+        this.getList()
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    },
+    async searchPushPeople (val) {
+      let res = await this.$axios({
+        url: '/auth/user/user/list',
+        method: 'post',
+        data: {
+          keyword: val
+        }
+      })
+      if (res.code == '0') {
+        this.pushOptions = res.data
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    },
+    // 推送
+    pushCase (id) {
+      this.pushDialog = true
+      this.pushId = id
+    },
     editCaseType (id) {
       this.caseTypeDialog = true
       this.id = id
     },
+    // 编辑
     async editCaseTypeSubmit () {
       let choseArr = []
       for (let i = 0; i < this.categoryList.length; i++) {
@@ -229,23 +304,42 @@ export default {
       this.caseInfoDialog = true
       this.caseID = item.id
     },
-    xxx () {
+    pagin () {
       this.getList()
     },
     onSearchCase () {
       this.getList()
     },
     async getList () {
+      let choseArr = []
+      for (let i = 0; i < this.categoryList.length; i++) {
+        for (let j = 0; j < this.caseClass.length; j++) {
+          if (this.caseClass[j] == this.categoryList[i].name) {
+            choseArr.push(this.categoryList[i].id)
+          }
+        }
+      }
+      if (choseArr.length == 0) {
+        choseArr = ''
+      }
+      let endTime = ''
+      let startTime = ''
+      if (this.time != null && this.time.length > 1) {
+        endTime = this.time[1]
+        startTime = this.time[0]
+      } else if (this.time != null && this.time.length === 1) {
+        startTime = this.time[0]
+      }
       let res = await this.$axios({
         url: '/business/category/case/list',
         method: 'post',
         data: {
           asc: this.asc, // ASC正序，DESC倒叙
-          categoryId: this.caseClass, // 分类
-          endTime: this.time[1], // 结束时间
+          categoryId: choseArr, // 分类
+          endTime: endTime, // 结束时间
           keyword: this.keyword,
           rule: this.rule, // 排序规则:READ 阅读量，TIME: 时间
-          startTime: this.time[0], // 开始时间
+          startTime: startTime, // 开始时间
           page: this.page,
           pageSize: 10
         }
@@ -270,7 +364,7 @@ export default {
 
         this.categoryList = data
         let caseOptions = []
-        data.forEach(item => {
+        data.forEach((item) => {
           let obj = {}
           obj.value = item.name
           obj.label = item.name
@@ -327,8 +421,8 @@ export default {
         return
       }
       let categoryId = []
-      this.checkList.forEach(item => {
-        this.categoryList.forEach(i => {
+      this.checkList.forEach((item) => {
+        this.categoryList.forEach((i) => {
           if (i.name === item) {
             categoryId.push(i.id)
           }
@@ -354,6 +448,7 @@ export default {
           message: 'Operation is successful',
           type: 'success'
         })
+        this.importDialog = false
       } else {
         this.$message({
           message: res.msg,

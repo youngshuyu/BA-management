@@ -46,6 +46,35 @@ export default new Router({
       ]
     },
     {
+      path: '/personalCenter',
+      name: 'perCenter',
+      component: () => import('@/components/layout/baseLayout'),
+      meta: {
+        subMenu: true,
+        title: 'perCenter'
+      },
+      children: [
+        {
+          path: 'personalCenter',
+          name: 'perCen',
+          component: () => import('@/components/layout/emptyLayout'),
+          meta: {
+            title: 'perCenter'
+          },
+          children: [
+            {
+              path: '/personalCenter/perCenter',
+              name: ' personalCenter',
+              component: () => import('@/components/personalCenter/personalCenter'),
+              meta: {
+                title: 'personalCenter'
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       path: '/caseManagement',
       name: 'caseManagement',
       component: () => import('@/components/layout/baseLayout'),

@@ -37,31 +37,25 @@
         </div>
       </div>
       <div class="searchBottom">
-        <div class="searchBottomBox">
-          <div class="title">type:</div>
-          <el-select size="small" v-model="value" placeholder="请选择">
-            <el-option
-              v-for="item in options"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </div>
-        <div class="searchBottomBox">
-          <div class="title">status:</div>
-          <el-select size="small" v-model="status" placeholder="请选择">
-            <el-option
-              v-for="item in statusOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </div>
-        <el-button size="small" type="primary" style="margin-left:20px;">search</el-button>
+        <el-button size="small" type="primary" @click="search()">search</el-button>
       </div>
     </el-card>
+    <el-card shadow="hover" style="margin-top:10px;">
+      <el-table :data="tableData" style="width: 100%">
+        <el-table-column type="index" width="170px" label="serialNumber"></el-table-column>
+        <el-table-column prop="title" label='title'></el-table-column>
+        <el-table-column prop="pushUsername" label='Push People'></el-table-column>
+        <el-table-column prop="acceptUsername" label='Accept People'></el-table-column>
+        <el-table-column prop="createTime" label='Push Time'></el-table-column>
+      </el-table>
+    </el-card>
+    <el-pagination
+      background
+      :current-page.sync="page"
+      layout="prev, pager, next"
+      @current-change="pagin()"
+      :total="total"
+    ></el-pagination>
   </div>
 </template>
 
@@ -70,6 +64,9 @@ export default {
   name: 'pushLog',
   data () {
     return {
+      tableData: [],
+      total: 10, // 总条数
+      page: 1, // 当前页码
       headline: '', // 标题
       pushPeople: '', // 推送人
       choseTime: '', // 选择的时间
@@ -127,6 +124,52 @@ export default {
         }
       ]
     }
+  },
+  methods: {
+    // 搜索
+    search () {
+      this.getList()
+    },
+    // 分页
+    pagin () {
+      this.getList()
+    },
+    // 获取列表
+    async getList () {
+      let endTime = ''
+      let startTime = ''
+      if (this.choseTime != null && this.choseTime.length > 1) {
+        endTime = this.choseTime[1]
+        startTime = this.choseTime[0]
+      } else if (this.choseTime != null && this.choseTime.length === 1) {
+        startTime = this.choseTime[0]
+      }
+      let res = await this.$axios({
+        url: '/business/log/push',
+        method: 'post',
+        data: {
+          c: 10,
+          p: this.page,
+          endTime: endTime, // 结束时间
+          startTime: startTime, // 开始时间
+          title: this.headline,
+          username: this.pushPeople
+        }
+      })
+      console.log('push', res)
+      if (res.code === '0') {
+        this.total = res.data.count
+        this.tableData = res.data.list
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    }
+  },
+  created () {
+    this.getList()
   }
 }
 </script>

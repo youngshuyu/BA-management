@@ -143,7 +143,7 @@ export default {
         // console.log(result)
         if (result.code == 0) {
           window.localStorage.setItem('menuData', res.data)
-          this.$router.push('/caseManagement/CaseList')
+          this.$router.push('/home/index')
         } else {
           this.$message({
             message: res.msg,

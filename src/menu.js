@@ -10,8 +10,8 @@ export const menuData = [{
       children: [
         {
           path: '/home/index',
-          name: 'CaseList',
-          title: 'CaseList'
+          name: 'home',
+          title: 'home'
         }
       ]
     }
@@ -103,6 +103,25 @@ export const menuData = [{
           path: '/systemManage/originManage',
           name: 'originManage',
           title: 'originManage'
+        }
+      ]
+    }
+  ]
+},
+{
+  path: '/personalCenter',
+  name: 'personalCenter',
+  title: 'personalCenter',
+  children: [
+    {
+      path: '/personalCenter',
+      name: 'perCen',
+      title: 'perCenter',
+      children: [
+        {
+          path: '/personalCenter/perCenter',
+          name: 'personalCenter',
+          title: 'personalCenter'
         }
       ]
     }

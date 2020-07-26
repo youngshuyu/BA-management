@@ -35,7 +35,6 @@
         </div>
       </div>
     </div>
-
     <div class="baseLayoutMain">
       <div class="baseLayoutAside">
         <div class="baseLayoutAsideList">
