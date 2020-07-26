@@ -23,6 +23,7 @@
         <div class="searchTopBox">
           <div class="title" style="margin-left:5px">select time:</div>
           <el-date-picker
+            value-format="yyyy-MM-dd HH:mm:ss"
             style="width:255px;"
             size="small"
             v-model="choseTime"
@@ -42,8 +43,8 @@
     </el-card>
     <el-card shadow="hover" style="margin-top:10px;">
       <el-tabs v-model="read" type="card" @tab-click="handleClick">
-        <el-tab-pane label="未读" name="UNREAD"></el-tab-pane>
-        <el-tab-pane label="已读" name="HAVE_READ"></el-tab-pane>
+        <el-tab-pane label="UNREAD" name="UNREAD"></el-tab-pane>
+        <el-tab-pane label="READ" name="HAVE_READ"></el-tab-pane>
       </el-tabs>
       <el-table :data="tableData" style="width: 100%" @cell-click="CaseInfo">
         <el-table-column type="index" width="170px" label="serialNumber"></el-table-column>

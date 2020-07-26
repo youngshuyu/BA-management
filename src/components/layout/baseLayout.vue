@@ -5,6 +5,7 @@
       <div class="baseLayoutHeaderLeft">
         <p>Case Analysis platform</p>
       </div>
+      <!--一级导航  -->
       <div class="baseLayoutHeaderTab">
         <div v-for="(item,i) in tabList" :key="i" @click="handleTab(item)">
           <div
@@ -12,6 +13,7 @@
           >{{item.title}}</div>
         </div>
       </div>
+      <!-- /一级导航 -->
       <div class="baseLayoutHeaderInfo">
         <div class="baseLayoutHeaderInfoTop">
           <div class="baseLayoutHeaderInfoTopItem">
@@ -31,35 +33,26 @@
             </el-tooltip>
           </div>
 
-          <!-- 1134 -->
         </div>
       </div>
     </div>
+    <!-- 二级导航 -->
     <div class="baseLayoutMain">
       <div class="baseLayoutAside">
         <div class="baseLayoutAsideList">
-          <!-- <el-menu :default-active="currentMenu">
-                        <el-submenu  v-for="(item,i) in defaultSubMenu" :index="item.name" :key="i">
-                            <template slot="title">
-                                <i class="el-icon-location"></i>
-                                <span>{{item.title}}</span>
-                            </template>
-                            <el-menu-item v-for="(ite,int) in item.children" :index="ite.name" @click="handleMenu(ite)" :key="int">{{ite.title}}</el-menu-item>
-                        </el-submenu>
-          </el-menu>-->
 
-          <div v-for="(item,i) in defaultSubMenu" :key="i">
-            <div class="baseLayoutAsideItemTitleBox">
+          <div v-for="(item,i) in defaultSubMenu" :key="i" :class=" {'baseLayoutAsideItem':item.name!=currentMenu,'baseLayoutAsideItemActive':item.name==currentMenu}">
+            <div class="baseLayoutAsideItemTitleBox" @click="handleMenu(item)">
               <p class="baseLayoutAsideItemTitle">{{item.title}}</p>
             </div>
-            <div
+            <!-- <div
               v-for="(ite,int) in item.children"
               :key="int"
               @click="handleMenu(ite)"
               :class=" {'baseLayoutAsideItem':ite.name!=currentMenu,'baseLayoutAsideItemActive':ite.name==currentMenu}"
             >
               <p class="baseLayoutAsideItemText">{{ite.title}}</p>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -68,6 +61,7 @@
         <router-view />
       </div>
     </div>
+    <!-- 二级导航结束 -->
     <el-dialog title="Information modification" :visible.sync="dialogFormVisible">
       <el-form :model="form">
         <el-form-item label="UserName" :label-width="formLabelWidth">
@@ -122,40 +116,28 @@ export default {
     handleTab (list) {
       this.currentTab = list.name
       let subMenuList = list.children
-      let subSubMenuList = subMenuList[0].children
       this.defaultSubMenu = subMenuList
-      this.currentMenu = subSubMenuList[0].name
-      this.$router.push(subSubMenuList[0].path)
+      this.currentMenu = subMenuList[0].name
+      this.$router.push(subMenuList[0].path)
     },
     handleMenu (item) {
       this.currentMenu = item.name
       this.$router.push(item.path)
     },
-    handleOpen (key, keyPath) {
-      console.log(key, keyPath)
-    },
-    handleClose (key, keyPath) {
-      console.log(key, keyPath)
-    },
     // 根据当前路由，设置二级路由
     setTabList (isDev) {
-      console.log(isDev)
-      console.log(menuData)
-
       let tabLists = []
       tabLists = menuData || []
-      //   let menuDataByApi = JSON.parse(
-      //     this.$commonUtils.getSessionItem("menuData")
-      //   ); // 从缓存中取 登录时获取的菜单数据
-
-      //   if (isDev && isDev == 'dev') {
-      //     tabLists = menuData || []; // 使用本地全部菜单
-      //   } else {
-      //     tabLists = menuDataByApi || []; // 使用接口权限菜单
-      //   }
-
-      // let url = window.location.href;
-      // let pathnameArr = url.split('#/')[1].split('/');
+      // let menuDataByApi = JSON.parse(
+      //   window.localStorage.getItem('menuData')
+      //   // this.$commonUtils.getSessionItem("menuData")
+      // ) // 从缓存中取 登录时获取的菜单数据
+      // console.log('1111', menuDataByApi)
+      // if (isDev && isDev == 'dev') {
+      //   tabLists = menuData || [] // 使用本地全部菜单
+      // } else {
+      //   tabLists = menuDataByApi || [] // 使用接口权限菜单
+      // }
 
       let pathnameArr = this.pathnameArr
       // console.log("当前路由地址 :" , pathnameArr);
@@ -351,7 +333,7 @@ export default {
         }
       }
       .baseLayoutAsideItemActive {
-        background-color: #3592e4;
+        background-color: #f7f7f7;
       }
     }
     .baseLayoutAside::-webkit-scrollbar {

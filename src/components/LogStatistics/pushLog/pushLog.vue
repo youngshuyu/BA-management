@@ -23,8 +23,9 @@
         <div class="searchTopBox">
           <div class="title" style="margin-left:5px">select time:</div>
           <el-date-picker
-          style="width:255px;"
+            style="width:255px;"
             size="small"
+            value-format="yyyy-MM-dd HH:mm:ss"
             v-model="choseTime"
             type="datetimerange"
             :picker-options="pickerOptions"

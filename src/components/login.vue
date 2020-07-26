@@ -142,7 +142,7 @@ export default {
         })
         // console.log(result)
         if (result.code == 0) {
-          window.localStorage.setItem('menuData', res.data)
+          window.localStorage.setItem('menuData', result.data)
           window.localStorage.setItem('userName', this.ruleForm.name)
           this.$router.push('/home/index')
         } else {
