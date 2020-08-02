@@ -18,7 +18,6 @@
             <div>
               <div class="replyContent">{{item.content}}</div>
               <div class="replyName">{{item.fromUsername}}</div>
-
               <div class="replyTime">{{item.createTime}}</div>
             </div>
             <div>
@@ -32,7 +31,7 @@
               <el-button type="danger" plain v-if="item.canDelete" size="mini" @click="deleteReply(item.id)">delete</el-button>
             </div>
           </div>
-          <div v-for="(ite , i) in item.children" :key="i">
+          <div class="child-reply" v-for="(ite , i) in item.children" :key="i">
           <div class="replyItem">
             <div>
 
@@ -41,12 +40,6 @@
               <div class="replyTime">{{ite.createTime}}</div>
             </div>
             <div>
-              <el-button
-                type="primary"
-                plain
-                size="mini"
-                @click="openReply(ite)"
-              >reply</el-button>
               <el-button type="danger" plain v-if="ite.canDelete" size="mini"  @click="deleteReply(ite.id)">delete</el-button>
             </div>
           </div>
@@ -61,8 +54,8 @@
           v-model="reply"
           :maxlength="maxlength"
         ></el-input>
+        <el-button style="margin-top:15px;" type="primary" @click="replySubmit()">reply</el-button>
       </div>
-      <el-button type="primary" @click="replySubmit()">reply</el-button>
     </div>
   </div>
 </template>
@@ -75,7 +68,7 @@ export default {
   },
   data () {
     return {
-      placeholder: '请输入回复',
+      placeholder: 'Please enter reply.',
       caseInfo: {},
       reply: '',
       replyList: [],
@@ -212,7 +205,7 @@ export default {
   .replyLisst {
     width: 100%;
     // height: 100px;
-    border: 1px solid red;
+
     box-sizing: border-box;
     padding: 10px;
     .replyItem {
@@ -226,11 +219,21 @@ export default {
         margin-top: 5px;
         display: inline-block;
         margin-right: 10px;
+        color: #ccc;
       }
       .replyTime {
         display: inline-block;
+         color: #ccc;
       }
     }
+    .child-reply {
+      padding-left: 30px;
+    }
+  }
+  .reply {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
   }
 }
 </style>
