@@ -11,19 +11,33 @@
       这是因为JavaScript的特性所导致，在component中，data必须以函数的形式存在，不可以是对象。
       组建中的data写成一个函数，数据以函数返回值的形式定义，这样每次复用组件的时候，都会返回一份新的data，相当于每个组件实例都有自己私有的数据空间，它们只负责各自维护的数据，不会造成混乱。而单纯的写成对象形式，就是所有的组件实例共用了一个data，这样改一个全都改了。
     </div>
-    <div>回复</div>
+    <div class="caseComment">
+      <CaseComment ref="case-comment" :case="caseId" @click-reply="onReply" @click-cancelReply="isReleaseBtnShow = true"></CaseComment>
+      <el-button v-show="isReleaseBtnShow" class="release-btn" type="primary" @click="showPostComment">Release comment</el-button>
+      <PostComment :case="caseId" v-show="isPostCommentShow" @click-post="closePostComment"></PostComment>
+    </div>
   </div>
 </template>
 
 <script>
+import CaseComment from '../components/case-comment'
+import PostComment from '../components/post-comment'
 export default {
   name: 'caseInfo',
   props: {
     case: Number
   },
+  components: {
+    CaseComment,
+    PostComment
+  },
   data () {
     return {
-      caseInfo: {}
+      caseInfo: {},
+      caseId: '',
+      isPostCommentShow: false,
+      isReleaseBtnShow: true,
+      currentComment: {}
     }
   },
   methods: {
@@ -41,11 +55,27 @@ export default {
           type: 'warning'
         })
       }
+    },
+    showPostComment () {
+      this.isPostCommentShow = true
+      this.isReleaseBtnShow = false
+    },
+    closePostComment (newComment) {
+      this.isPostCommentShow = false
+      this.isReleaseBtnShow = true
+      // this.$refs['case-comment'].caseCommentList && this.$refs['case-comment'].caseCommentList.unshift(newComment)
+      this.$refs['case-comment'].getCaseComment()
+    },
+    onReply (comment) {
+      // 打开弹层
+      this.isReleaseBtnShow = false
     }
-    // 获取评论
 
   },
   created () {
+    this.caseId = this.case
+    console.log('123', this.caseId)
+
     this.getCaseInfo()
   }
 }
@@ -79,5 +109,14 @@ export default {
       text-indent:2em;
       line-height: 25px;
   }
+  .caseComment {
+    position: relative;
+    .release-btn {
+      position: absolute;
+      right: 0;
+      bottom: -40px;
+    }
+  }
+
 }
 </style>

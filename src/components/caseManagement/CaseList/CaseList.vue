@@ -86,7 +86,7 @@
       :total="total"
     ></el-pagination>
     <el-dialog :visible.sync="caseInfoDialog" width="80%">
-      <caseInfo :case="caseID"></caseInfo>
+      <caseInfo v-if="caseInfoDialog" :case="caseID"></caseInfo>
     </el-dialog>
     <el-dialog :visible.sync="caseTypeDialog" width="500px">
       <div>
@@ -319,7 +319,7 @@ export default {
           }
         }
       }
-      if (choseArr.length == 0) {
+      if (choseArr.length === 0) {
         choseArr = ''
       }
       let endTime = ''
