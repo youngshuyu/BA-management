@@ -3,7 +3,7 @@ import axios from 'axios'
 import { Message } from 'element-ui'// 引入提示对象
 // import JsonBig from 'json-bigint'// 引入第三方包
 
-axios.defaults.baseURL = 'http://47.95.197.255:7001'
+axios.defaults.baseURL = 'http://123.56.83.198:7001'
 
 axios.interceptors.request.use(function (config) {
 //   // 在发起请求请做一些业务处理

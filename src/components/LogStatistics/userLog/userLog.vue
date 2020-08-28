@@ -11,20 +11,26 @@
             class="case-search"
           ></el-input>
         </div>
-        <div class="searchBottomBox">
-          <div class="title">type:</div>
-          <el-select size="small" v-model="type" placeholder="请选择">
-            <el-option
-              v-for="item in typeOptions"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            ></el-option>
-          </el-select>
-        </div>
-        <el-button size="small" type="primary" style="margin-left:10px">search</el-button>
+        <el-button size="small" type="primary" style="margin-left:10px" @click="getList">search</el-button>
       </div>
     </el-card>
+
+    <el-card shadow="hover" style="margin-top:10px;">
+      <el-table :data="list" style="width: 100%">
+        <el-table-column prop="operatorName" label="systematicName" ></el-table-column>
+        <el-table-column prop="operationTime" label="systematicName"></el-table-column>
+        <el-table-column prop="content" label="systematicName" ></el-table-column>
+        
+      </el-table>
+    </el-card>
+
+    <el-pagination
+      background
+      :current-page.sync="page"
+      layout="prev, pager, next"
+      @current-change="getList"
+      :total="total"
+    ></el-pagination>
   </div>
 </template>
 
@@ -33,19 +39,38 @@ export default {
   name: "userLog",
   data() {
     return {
-      headline:'',
-      type: "",
-      typeOptions: [
-        {
-          value: "选项1",
-          label: "success"
-        },
-        {
-          value: "选项2",
-          label: "fail"
-        }
-      ]
+      headline: "",
+      page: 1, // 当前页码
+      total: 100,
+      list:[]
     };
+  },
+  created() {
+    this.getList();
+  },
+  methods: {
+    async getList() {
+      let res = await this.$axios({
+        url: "/business/log/push/system",
+        method: "post",
+        data: {
+          keyword: this.headline,
+          c: 10,
+          p: this.page
+        }
+      });
+      console.log(res);
+      if (res.code === "0") {
+        this.list = res.data.list;
+        this.total = res.data.count;
+        console.log(res);
+      } else {
+        this.$message({
+          message: res.msg,
+          type: "warning"
+        });
+      }
+    }
   }
 };
 </script>

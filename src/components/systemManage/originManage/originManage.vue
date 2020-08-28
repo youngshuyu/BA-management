@@ -3,29 +3,40 @@
     <el-card class="box-card" shadow="hover">
       <div class="clearfix">
         <el-button type="primary" @click="dialogFormVisible = true">Add organizational structure</el-button>
-        <el-dialog title="Add organizational structure" :visible.sync="dialogFormVisible" width="600">
-          <el-form :model="form">
-            <el-form-item label="Name of Organization Structure" :label-width="formLabelWidth">
+
+        <el-dialog
+          title="Add organizational structure"
+          :visible.sync="dialogFormVisible"
+          width="600"
+        >
+          <el-form :model="form" :rules="rules" ref="addForm">
+            <el-form-item
+              prop="name"
+              label="Name of Organization Structure"
+              :label-width="formLabelWidth"
+            >
               <el-input v-model="form.name" autocomplete="off"></el-input>
             </el-form-item>
             <el-form-item label="Parent schema" :label-width="formLabelWidth">
-              <el-input v-model="form.parentSchema" autocomplete="off"></el-input>
+              <el-cascader
+                style="width:100%"
+                :props="addProps"
+                change-on-select
+                :options="treeData"
+                @change="change"
+                v-model="form.parentId"
+              ></el-cascader>
             </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="dialogFormVisible = false">Cancel</el-button>
-            <el-button type="primary" @click="onAddOrganizationalStructure">Add</el-button>
+            <el-button type="primary" @click="onAddOrganizationalStructure('addForm')">Add</el-button>
           </div>
         </el-dialog>
       </div>
     </el-card>
     <el-card shadow="hover" style="margin-top:10px;">
-      <el-tree
-        :data="treeData"
-        :props="props"
-        show-checkbox
-        @check-change="handleCheckChange">
-      </el-tree>
+      <el-tree :data="treeData" :props="props"></el-tree>
     </el-card>
   </div>
 </template>
@@ -38,25 +49,38 @@ export default {
       treeData: [],
       props: {
         label: 'name',
-        children: 'sons'
+        children: 'sons',
+        value: 'id'
+      },
+      addProps: {
+        expandTrigger: 'click',
+        children: 'sons',
+        value: 'id',
+        label: 'name',
+        emitPath: false
       },
       count: 1,
       dialogFormVisible: false,
       form: {
-        name: '',
-        parentSchema: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+        parentId: null,
+        name: ''
       },
-      formLabelWidth: '220px'
+      formLabelWidth: '220px',
+      rules: {
+        name: [
+          {
+            required: true,
+            message: 'Please enter the organizationName',
+            trigger: 'blur'
+          }
+        ]
+      }
     }
   },
   methods: {
+    change () {
+      console.log(this.form.parentId)
+    },
     async getList () {
       let res = await this.$axios({
         url: '/auth/system/organization/tree'
@@ -88,11 +112,14 @@ export default {
       setTimeout(() => {
         var data
         if (hasChild) {
-          data = [{
-            name: 'zone' + this.count++
-          }, {
-            name: 'zone' + this.count++
-          }]
+          data = [
+            {
+              name: 'zone' + this.count++
+            },
+            {
+              name: 'zone' + this.count++
+            }
+          ]
         } else {
           data = []
         }
@@ -100,10 +127,37 @@ export default {
         resolve(data)
       }, 500)
     },
-    onAddOrganizationalStructure () {
-      this.dialogFormVisible = false
+    onAddOrganizationalStructure (formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          this.addSubmit()
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    async addSubmit () {
+      let res = await this.$axios({
+        url: '/auth/system/organization',
+        method: 'post',
+        data: this.form
+      })
+      console.log(res)
+      if (res.code == '0') {
+        this.dialogFormVisible = false
+        this.$message({
+          message: 'operate successfully',
+          type: 'success'
+        })
+        this.getList()
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
     }
-
   },
   created () {
     this.getList()

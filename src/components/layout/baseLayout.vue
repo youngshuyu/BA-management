@@ -5,6 +5,7 @@
       <div class="baseLayoutHeaderLeft">
         <p>Case Analysis platform</p>
       </div>
+      <!--一级导航  -->
       <div class="baseLayoutHeaderTab">
         <div v-for="(item,i) in tabList" :key="i" @click="handleTab(item)">
           <div
@@ -12,11 +13,12 @@
           >{{item.title}}</div>
         </div>
       </div>
+      <!-- /一级导航 -->
       <div class="baseLayoutHeaderInfo">
         <div class="baseLayoutHeaderInfoTop">
           <div class="baseLayoutHeaderInfoTopItem">
             <!-- <el-tooltip  placement="bottom-start"> -->
-            <p class="adminPeople">user:XXX</p>
+            <p class="adminPeople">user: {{userName}}</p>
           </div>
 
           <div class="baseLayoutHeaderInfoTopItem" @click="dialogFormVisible = true">
@@ -30,36 +32,29 @@
               <img src="@/assets/img/quit.png" alt />
             </el-tooltip>
           </div>
-
-          <!-- 1134 -->
         </div>
       </div>
     </div>
+    <!-- 二级导航 -->
     <div class="baseLayoutMain">
       <div class="baseLayoutAside">
         <div class="baseLayoutAsideList">
-          <!-- <el-menu :default-active="currentMenu">
-                        <el-submenu  v-for="(item,i) in defaultSubMenu" :index="item.name" :key="i">
-                            <template slot="title">
-                                <i class="el-icon-location"></i>
-                                <span>{{item.title}}</span>
-                            </template>
-                            <el-menu-item v-for="(ite,int) in item.children" :index="ite.name" @click="handleMenu(ite)" :key="int">{{ite.title}}</el-menu-item>
-                        </el-submenu>
-          </el-menu>-->
-
-          <div v-for="(item,i) in defaultSubMenu" :key="i">
-            <div class="baseLayoutAsideItemTitleBox">
+          <div
+            v-for="(item,i) in defaultSubMenu"
+            :key="i"
+            :class=" {'baseLayoutAsideItem':item.name!=currentMenu,'baseLayoutAsideItemActive':item.name==currentMenu}"
+          >
+            <div class="baseLayoutAsideItemTitleBox" @click="handleMenu(item)">
               <p class="baseLayoutAsideItemTitle">{{item.title}}</p>
             </div>
-            <div
+            <!-- <div
               v-for="(ite,int) in item.children"
               :key="int"
               @click="handleMenu(ite)"
               :class=" {'baseLayoutAsideItem':ite.name!=currentMenu,'baseLayoutAsideItemActive':ite.name==currentMenu}"
             >
               <p class="baseLayoutAsideItemText">{{ite.title}}</p>
-            </div>
+            </div>-->
           </div>
         </div>
       </div>
@@ -68,30 +63,46 @@
         <router-view />
       </div>
     </div>
+    <!-- 二级导航结束 -->
     <el-dialog title="Information modification" :visible.sync="dialogFormVisible">
-      <el-form :model="form">
-        <el-form-item label="UserName" :label-width="formLabelWidth">
+      <el-form :model="form" :rules="rules" ref="ruleForm">
+        <el-form-item prop="name" label="RealName" :label-width="formLabelWidth">
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="UserAccount" :label-width="formLabelWidth">
-          <el-input v-model="form.account" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="Password" :label-width="formLabelWidth">
+        <el-form-item prop="password" label="Password" :label-width="formLabelWidth">
           <el-input v-model="form.password" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">Cancel</el-button>
-        <el-button type="primary" @click="onEditAccountInfo">Confirm</el-button>
+        <el-button type="primary" @click="onEditAccountInfo('ruleForm')">Confirm</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
-import { menuData } from '@/menu'
+import { menuData } from '@/menu';
 export default {
   data () {
+    var checkName = (rule, value, callback) => {
+      console.log(value)
+      if (!value) {
+        return callback(new Error('The user name cannot be empty.'))
+      } else {
+        callback()
+      }
+    }
+    var validatePass = (rule, value, callback) => {
+      if (value === '') {
+        callback(new Error('Please input a password.'))
+      } else if (String(value).length < 6) {
+        callback(new Error('Password length is not less than 6 digits!'))
+      } else {
+        callback()
+      }
+    }
     return {
+      userName: '',
       tabList: [], // tab列表
       defaultSubMenu: [], // 默认的二级菜单
       currentTab: '',
@@ -101,15 +112,13 @@ export default {
       pathnameArr: this.$router.history.current.path.substr(1).split('/'), // 当前路由 或使用：window.location.href.split('#/')[1].split('/')
       form: {
         name: '',
-        account: '',
-        password: '',
-        region: '',
-        date1: '',
-        date2: '',
-        delivery: false,
-        type: [],
-        resource: '',
-        desc: ''
+        password: ''
+      },
+      rules: {
+        password: [
+          { required: true, validator: validatePass, trigger: 'blur' }
+        ],
+        name: [{ required: true, validator: checkName, trigger: 'blur' }]
       }
     }
   },
@@ -121,41 +130,24 @@ export default {
     handleTab (list) {
       this.currentTab = list.name
       let subMenuList = list.children
-      let subSubMenuList = subMenuList[0].children
       this.defaultSubMenu = subMenuList
-      this.currentMenu = subSubMenuList[0].name
-      this.$router.push(subSubMenuList[0].path)
+      this.currentMenu = subMenuList[0].name
+      this.$router.push(subMenuList[0].path)
     },
     handleMenu (item) {
       this.currentMenu = item.name
       this.$router.push(item.path)
     },
-    handleOpen (key, keyPath) {
-      console.log(key, keyPath)
-    },
-    handleClose (key, keyPath) {
-      console.log(key, keyPath)
-    },
     // 根据当前路由，设置二级路由
     setTabList (isDev) {
-      console.log(isDev)
-      console.log(menuData)
-
       let tabLists = []
       tabLists = menuData || []
-      //   let menuDataByApi = JSON.parse(
-      //     this.$commonUtils.getSessionItem("menuData")
-      //   ); // 从缓存中取 登录时获取的菜单数据
-
-      //   if (isDev && isDev == 'dev') {
-      //     tabLists = menuData || []; // 使用本地全部菜单
-      //   } else {
-      //     tabLists = menuDataByApi || []; // 使用接口权限菜单
-      //   }
-
-      // let url = window.location.href;
-      // let pathnameArr = url.split('#/')[1].split('/');
-
+      let menuDataByApi = this.$store.state.menuData
+      if (isDev && isDev == 'dev') {
+        tabLists = menuData || [] // 使用本地全部菜单
+      } else {
+        tabLists = menuDataByApi || [] // 使用接口权限菜单
+      }
       let pathnameArr = this.pathnameArr
       // console.log("当前路由地址 :" , pathnameArr);
 
@@ -178,11 +170,61 @@ export default {
       this.currentTab = pathnameArr[0]
       this.currentMenu = pathnameArr[1]
     },
-    onEditAccountInfo () {
-      this.dialogFormVisible = false
+    onEditAccountInfo (formName) {
+      this.$refs[formName].validate(valid => {
+        if (valid) {
+          let formParams = {
+            id: window.localStorage.getItem('id'), // 用户名
+            password: this.form.password, // 密码
+            realName: this.form.name // 渠道
+          }
+          this.editUserInfo(formParams)
+        } else {
+          console.log('表单校验错误!!')
+          return false
+        }
+      })
+      // this.dialogFormVisible = false
+    },
+    async editUserInfo (formParams) {
+      let res = await this.$axios({
+        url: '/auth/user/change/user/info',
+        method: 'post',
+        data: formParams
+      })
+      console.log(res)
+      if (res.code === '0') {
+        this.dialogFormVisible = false
+        this.logout()
+        this.$message({
+          message: 'operate successfully',
+          type: 'success'
+        })
+      } else {
+        this.$message({
+          message: res.msg,
+          type: 'warning'
+        })
+      }
+    },
+    async getUserInfo () {
+      let res = await this.$axios({
+        url: '/auth/user/info',
+        method: 'get'
+      })
+      // let res = await this.$axios({
+      //   url: '/auth/user/info',
+      //   method: 'get'
+      // })
+      if (res.code === '0') {
+        window.localStorage.setItem('id', res.data.id)
+        this.userName = res.data.realName
+      }
     }
   },
-
+  created () {
+    this.getUserInfo()
+  },
   mounted () {
     this.setTabList('dev') // 传参"dev" 即可使用开发菜单（全部菜单）
     this.setActivelyItem()
@@ -350,7 +392,7 @@ export default {
         }
       }
       .baseLayoutAsideItemActive {
-        background-color: #3592e4;
+        background-color: #f7f7f7;
       }
     }
     .baseLayoutAside::-webkit-scrollbar {

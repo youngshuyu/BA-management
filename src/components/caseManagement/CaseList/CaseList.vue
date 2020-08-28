@@ -114,7 +114,12 @@
       </div>
     </el-dialog>
     <el-dialog :visible.sync="pushDialog" width="500px">
-      <el-select v-model="pushName" :filter-method="searchPushPeople" filterable placeholder="请输入姓名">
+      <el-select
+        v-model="pushName"
+        :filter-method="searchPushPeople"
+        filterable
+        placeholder="请输入姓名"
+      >
         <el-option
           v-for="item in pushOptions"
           :key="item.id"
@@ -311,14 +316,12 @@ export default {
       this.getList()
     },
     async getList () {
-      let choseArr = []
-      for (let i = 0; i < this.categoryList.length; i++) {
-        for (let j = 0; j < this.caseClass.length; j++) {
-          if (this.caseClass[j] == this.categoryList[i].name) {
-            choseArr.push(this.categoryList[i].id)
-          }
+      let choseArr = ''
+      this.categoryList.forEach(item => {
+        if (item.name === this.caseClass) {
+          choseArr = item.id
         }
-      }
+      })
       if (choseArr.length === 0) {
         choseArr = ''
       }
@@ -364,7 +367,7 @@ export default {
 
         this.categoryList = data
         let caseOptions = []
-        data.forEach((item) => {
+        data.forEach(item => {
           let obj = {}
           obj.value = item.name
           obj.label = item.name
@@ -389,7 +392,7 @@ export default {
       //  设置请求token
       xmlResquest.setRequestHeader(
         'Authorization',
-        '043ef4e7caee456ea02de11931408651'
+        window.localStorage.getItem('user-token')
       )
       xmlResquest.responseType = 'blob'
       //  返回
@@ -421,8 +424,8 @@ export default {
         return
       }
       let categoryId = []
-      this.checkList.forEach((item) => {
-        this.categoryList.forEach((i) => {
+      this.checkList.forEach(item => {
+        this.categoryList.forEach(i => {
           if (i.name === item) {
             categoryId.push(i.id)
           }

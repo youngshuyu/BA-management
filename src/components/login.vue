@@ -142,7 +142,22 @@ export default {
         })
         // console.log(result)
         if (result.code == 0) {
-          window.localStorage.setItem('menuData', res.data)
+          // window.localStorage.setItem('menuData', result.data)
+          // this.$store.commit('saveMenuData', result.data)
+          let arr = [{
+            path: '/home',
+            name: 'home',
+            title: 'home',
+            children: [
+              {
+                path: '/home/index',
+                name: 'home',
+                title: 'home'
+              }
+            ]
+          }, ...result.data]
+          this.$store.state.menuData = arr
+          window.localStorage.setItem('userName', this.ruleForm.name)
           this.$router.push('/home/index')
         } else {
           this.$message({

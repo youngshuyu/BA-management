@@ -1,18 +1,28 @@
 <template>
-  <el-card>
+  <div>
+    <el-card>
       <!-- 词云 -->
-    <div ref='wordCloudBox'></div>
-  </el-card>
-
+      <div ref="wordCloudBox"></div>
+    </el-card>
+    <el-dialog :visible.sync="showCaseListDetail" width="80%">
+      <caseDetail v-if="showCaseListDetail" :name="name"></caseDetail>
+    </el-dialog>
+  </div>
 </template>
 
 <script>
 import myCloud from '@/assets/js/myCloud.js'
+import caseDetail from './caseDetail'
 export default {
   name: 'index',
+  components: {
+    caseDetail
+  },
   data () {
     return {
-      wordList: []
+      wordList: [],
+      showCaseListDetail: false,
+      name: ''
     }
   },
 
@@ -22,7 +32,15 @@ export default {
         url: '/business/category/case/list'
       })
       console.log('结果', res.data)
-    //   this.tableData = res.data
+      //   this.tableData = res.data
+      res.data.forEach(item => {
+        if (item.readCount === 0) {
+          this.wordList.push({ text: item.name, size: 12 })
+        } else {
+          this.wordList.push({ text: item.name, size: item.readCount })
+        }
+      })
+      this.getWordCloud(this.wordList)
     },
     transform (arr) {
       arr.forEach(item => {
@@ -41,65 +59,18 @@ export default {
       myCloud(wordOption, this.getArticleList)
     },
     // 回调
-    getArticleList () {
+    getArticleList (e) {
       // ...
+      console.log(e)
+      this.name = e
+      this.showCaseListDetail = true
+    },
+    onClick (e) {
+      console.log(e)
     }
   },
   created () {
     this.getData()
-  },
-  mounted () {
-    let wordList = [
-      { text: 'vue devtool', size: 20 },
-      { text: 'html', size: 25 },
-      { text: 'js', size: 30 },
-      { text: 'js', size: 30 },
-      { text: 'vue', size: 20 },
-      { text: 'html', size: 25 },
-      { text: 'js', size: 30 },
-      { text: 'js', size: 30 },
-      { text: 'vue', size: 20 },
-      { text: 'html', size: 25 },
-      { text: 'js', size: 30 },
-      { text: 'js', size: 30 },
-      { text: 'vue', size: 20 },
-      { text: 'html', size: 25 },
-      { text: 'js', size: 30 },
-      { text: 'js', size: 30 },
-      { text: 'vue', size: 20 },
-      { text: 'html', size: 25 },
-      { text: 'js', size: 30 },
-      { text: 'js', size: 30 },
-      { text: 'vue', size: 20 },
-      { text: 'html', size: 25 },
-      { text: 'js', size: 30 },
-      { text: 'js', size: 30 },
-      { text: 'vue', size: 20 },
-      { text: 'html', size: 25 },
-      { text: 'js', size: 30 },
-      { text: 'js', size: 30 },
-      { text: 'vue sadsadsahdadhad', size: 20 },
-      { text: 'html', size: 25 },
-      { text: 'js', size: 30 },
-      { text: 'vue', size: 20 },
-      { text: 'html', size: 25 },
-      { text: 'js', size: 30 },
-      { text: 'js', size: 30 },
-      { text: 'vue', size: 20 },
-      { text: 'html', size: 25 },
-      { text: 'js', size: 30 },
-      { text: 'js', size: 30 },
-      { text: 'vue', size: 20 },
-      { text: 'html', size: 25 },
-      { text: 'js', size: 30 },
-      { text: 'js', size: 30 },
-      { text: 'vue', size: 20 },
-      { text: 'html', size: 25 },
-      { text: 'js', size: 30 }
-    ]
-    this.getWordCloud(wordList)
   }
-
 }
-
 </script>
